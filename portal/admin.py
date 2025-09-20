@@ -1,7 +1,15 @@
 from django.contrib import admin
-from .models import UserProfile, Team, ProjectSubmission
+# Corrected the import from ProjectSubmission to TeamSubmission
+from .models import UserProfile, Event, FAQ, Schedule, SubSchedule, Team, TeamMember, TeamSubmission 
 
-# Register your models here to make them accessible in the Django admin panel.
+# Register your models here
 admin.site.register(UserProfile)
+admin.site.register(Event)
+admin.site.register(FAQ)
+admin.site.register(Schedule)
+admin.site.register(SubSchedule)
 admin.site.register(Team)
-admin.site.register(ProjectSubmission)
+admin.site.register(TeamMember)
+# Register the correctly named model
+admin.site.register(TeamSubmission)
+
