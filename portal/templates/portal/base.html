@@ -42,6 +42,9 @@
     </script>
     <style>
       /* ========== Base Styles ========== */
+      html {
+        scroll-behavior: smooth;
+      }
       body {
         font-family: "Inter", sans-serif;
         background-color: #f7f7f7; /* Light mode default */
@@ -59,20 +62,11 @@
         background-color: #fff;
         border-radius: 1rem;
         transition: background-color 0.3s ease, border-color 0.3s ease;
+        border: 1px solid #e5e7eb;
       }
       .dark .card {
         background-color: #1e1e1e;
         border-color: #333;
-      }
-
-      /* ========== Headings ========== */
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        color: #00ff85; /* Accent green */
       }
 
       /* ========== Links and Buttons ========== */
@@ -81,55 +75,12 @@
         cursor: pointer;
         transition: opacity 0.2s ease, transform 0.1s ease;
       }
-      a.text-links,
-      .bg-links {
-        color: #1e90ff;
-      }
-      a.text-links:hover,
-      .bg-links:hover {
-        opacity: 0.9;
-      }
-      button:active,
-      a:active {
+      a:active,
+      button:active {
         transform: scale(0.98);
       }
-
-      /* ========== Forms ========== */
-      input,
-      select,
-      textarea {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-        border: 1px solid #d1d5db;
-        background-color: #f3f4f6;
-        color: #111827;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      }
-      .dark input,
-      .dark select,
-      .dark textarea {
-        background-color: #374151;
-        border-color: #4b5563;
-        color: #f3f4f6;
-      }
-      input:focus,
-      select:focus,
-      textarea:focus {
-        outline: none;
-        border-color: #00ff85;
-        box-shadow: 0 0 0 3px rgba(0, 255, 133, 0.3);
-      }
-
-      /* ========== Error Messages ========== */
-      .errorlist {
-        list-style: none;
-        color: #ef4444;
-        font-size: 0.875rem;
-        margin: 0.5rem 0 0 0;
-        padding: 0;
-      }
     </style>
+    {% block head %}{% endblock %}
   </head>
   <body>
     <!-- Header / Navbar -->
@@ -139,30 +90,22 @@
       <nav
         class="container mx-auto px-6 py-4 flex justify-between items-center"
       >
-        <a href="{% url 'index' %}" class="text-2xl font-bold">
+        <a
+          href="#"
+          class="text-2xl font-bold text-light-text dark:text-dark-text"
+        >
           KVSRIT <span class="text-accent">AI</span> Hackathon
         </a>
         <div class="hidden md:flex space-x-6 items-center">
           <a
-            href="{% url 'index' %}#about"
+            href="#about"
             class="text-light-text-secondary dark:text-dark-text-secondary hover:text-links transition-colors font-medium"
             >About</a
           >
 
-          {% if user.is_authenticated %}
+          <!-- For demonstration, I'm showing the logged-out state -->
           <a
             href="#"
-            class="text-light-text-secondary dark:text-dark-text-secondary hover:text-links transition-colors font-medium"
-            >Dashboard</a
-          >
-          <a
-            href="{% url 'logout' %}"
-            class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition-transform hover:scale-105"
-            >Logout</a
-          >
-          {% else %}
-          <a
-            href="{% url 'login' %}"
             class="text-links hover:underline font-semibold transition-colors"
             >Login</a
           >
@@ -173,7 +116,6 @@
             class="bg-links hover:opacity-90 text-white font-semibold py-2 px-5 rounded-lg transition-transform hover:scale-105"
             >Register</a
           >
-          {% endif %}
 
           <!-- Theme Switcher -->
           <button
@@ -194,13 +136,12 @@
         </div>
         <div class="md:hidden flex items-center gap-4">
           <!-- Mobile Auth Buttons -->
-          {% if not user.is_authenticated %}
           <a
-            href="{% url 'register' %}"
+            href="https://forms.gle/Fi4qMKEZzViipHNF9"
+            target="_blank"
             class="bg-links hover:opacity-90 text-white font-semibold py-2 px-4 rounded-lg"
             >Register</a
           >
-          {% endif %}
           <button
             id="theme-toggle-mobile"
             class="w-10 h-10 rounded-full flex items-center justify-center text-light-text-secondary dark:text-dark-text-secondary hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
@@ -222,26 +163,27 @@
 
     <!-- Main Content Block -->
     <main>
-      {% if messages %}
-      <div class="container mx-auto px-6 mt-4">
-        {% for message in messages %}
-        <div
-          class="p-4 mb-4 text-sm rounded-lg {% if message.tags == 'success' %} bg-green-900 text-green-300 {% else %} bg-red-900 text-red-300 {% endif %}"
-          role="alert"
-        >
-          {{ message }}
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %} {% block content %} {% endblock %}
+      <!-- This is where content from other files will be injected -->
+      {% block content %} {% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-gray-200 dark:border-gray-800">
+    <footer class="border-t border-gray-200 dark:border-gray-800 mt-12">
       <div
         class="container mx-auto px-6 py-8 text-center text-light-text-secondary dark:text-dark-text-secondary"
       >
-        <p>&copy; 2025 KVSRITspc AI Hackathon. All rights reserved.</p>
+        <p
+          class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800 text-sm"
+        >
+          © Students Programming Club Of CSE. All Rights Reserved.
+          <br />Designed & Developed by
+          <a
+            href="https://www.linkedin.com/in/bharathtelugu-ck/"
+            target="_blank"
+            class="text-links hover:underline"
+            >Bharath Telugu</a
+          >
+        </p>
       </div>
     </footer>
 
@@ -275,6 +217,7 @@
           darkIconMobile.classList.remove("hidden");
           lightIconMobile.classList.add("hidden");
         }
+        // Notify other scripts that the theme has changed
         document.dispatchEvent(new CustomEvent("themeChanged"));
       };
 
@@ -286,7 +229,9 @@
       };
 
       themeToggleBtn.addEventListener("click", toggleTheme);
-      themeToggleMobileBtn.addEventListener("click", toggleTheme);
+      if (themeToggleMobileBtn) {
+        themeToggleMobileBtn.addEventListener("click", toggleTheme);
+      }
 
       const savedTheme =
         localStorage.getItem("color-theme") ||
@@ -298,5 +243,6 @@
       // Feather Icons
       feather.replace();
     </script>
+    {% block scripts %}{% endblock %}
   </body>
 </html>
