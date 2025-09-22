@@ -2,16 +2,19 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('register/', views.register_view, name='register'),
+    # Public Pages
+    path('', views.home_view, name='home'), # Changed from 'index' to 'home_view' and 'home'
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    # Note: We are removing public registration. It's now admin-only.
 
-    # Role Dashboards
-    path('dashboard/manager/', views.event_manager_dashboard, name='event_manager_dashboard'),
-    path('dashboard/organizer/', views.lead_organizer_dashboard, name='lead_organizer_dashboard'),
+    # Participant Pages
+    path('profile/', views.profile_view, name='profile'),
+    path('team/create/', views.team_create_view, name='team_create'),
+    # Add URLs for team join, team management, and submission here
 
-    # Event Management
-    path('dashboard/manager/event/add/', views.manage_event_view, name='add_event'),
-    path('dashboard/manager/event/edit/<int:event_id>/', views.manage_event_view, name='edit_event'),
+    # Event Manager Pages
+    path('manager/dashboard/', views.manager_dashboard_view, name='manager_dashboard'),
+    path('manager/announcements/', views.manage_announcements_view, name='manage_announcements'),
+    # Add URLs for managing participants, teams, etc. here
 ]

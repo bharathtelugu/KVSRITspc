@@ -1,0 +1,127 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}{% if event %}Edit Event{% else %}Create Event{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-3xl font-bold mb-8">{% if event %}Editing '{{ event.title }}'{% else %}Create a New Event{% endif %}</h1>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        <div class="space-y-12">
+            
+            <!-- Main Event Form -->
+            <div class="card p-8 border border-gray-200 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-6">Main Event Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 form-field">
+                    {{ form.as_p }}
+                </div>
+            </div>
+
+            <!-- Schedule Formset -->
+            <div class="card p-8 border border-gray-200 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-6">Event Schedule</h2>
+                {{ schedule_formset.management_form }}
+                <div id="schedule-form-list" class="space-y-6">
+                    {% for form in schedule_formset %}
+                    <div class="schedule-form border-t border-gray-700 pt-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 form-field">
+                            {{ form.as_p }}
+                        </div>
+                        {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div id="empty-schedule-form" class="hidden">{{ schedule_formset.empty_form.as_p }}</div>
+                <button type="button" id="add-schedule-form" class="mt-4 text-links font-semibold hover:underline">+ Add Another Day</button>
+            </div>
+
+            <!-- FAQ Formset -->
+            <div class="card p-8 border border-gray-200 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-6">FAQs</h2>
+                 {{ faq_formset.management_form }}
+                <div id="faq-form-list" class="space-y-6">
+                    {% for form in faq_formset %}
+                    <div class="faq-form border-t border-gray-700 pt-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 form-field">
+                           {{ form.as_p }}
+                        </div>
+                        {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div id="empty-faq-form" class="hidden">{{ faq_formset.empty_form.as_p }}</div>
+                <button type="button" id="add-faq-form" class="mt-4 text-links font-semibold hover:underline">+ Add Another FAQ</button>
+            </div>
+            
+            <!-- Organizer Formset -->
+            <div class="card p-8 border border-gray-200 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-6">Organizers</h2>
+                 {{ organizer_formset.management_form }}
+                <div id="organizer-form-list" class="space-y-6">
+                    {% for form in organizer_formset %}
+                    <div class="organizer-form border-t border-gray-700 pt-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 form-field">{{ form.as_p }}</div>
+                         {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div id="empty-organizer-form" class="hidden">{{ organizer_formset.empty_form.as_p }}</div>
+                <button type="button" id="add-organizer-form" class="mt-4 text-links font-semibold hover:underline">+ Add Another Organizer</button>
+            </div>
+
+
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+                <a href="{% url 'event_manager_dashboard' %}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg mr-4">Cancel</a>
+                <button type="submit" class="bg-accent hover:opacity-90 text-dark-bg font-bold py-3 px-8 rounded-lg">Save Event</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function setupFormset(prefix) {
+        const formList = document.getElementById(`${prefix}-form-list`);
+        const emptyFormTemplate = document.getElementById(`empty-${prefix}-form`).innerHTML;
+        const totalFormsInput = document.getElementById(`id_${prefix}-TOTAL_FORMS`);
+        const addFormButton = document.getElementById(`add-${prefix}-form`);
+
+        addFormButton.addEventListener('click', function() {
+            let formIdx = parseInt(totalFormsInput.value);
+            const newFormHtml = emptyFormTemplate.replace(/__prefix__/g, formIdx);
+            
+            const newFormContainer = document.createElement('div');
+            newFormContainer.className = `${prefix}-form border-t border-gray-700 pt-6 mt-6`;
+            newFormContainer.innerHTML = newFormHtml;
+            
+            formList.appendChild(newFormContainer);
+            totalFormsInput.value = formIdx + 1;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupFormset('schedule');
+        setupFormset('faq');
+        setupFormset('organizer');
+        // Call setupFormset for any other formsets you add
+    });
+</script>
+<style>
+    .form-field p { margin-bottom: 1rem; }
+    .form-field label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    .form-field input, .form-field textarea, .form-field select {
+        width: 100%; border-radius: 0.5rem; padding: 0.75rem 1rem;
+        background-color: #374151; border: 1px solid #4b5563; color: #f3f4f6;
+    }
+    .dark .form-field input, .dark .form-field textarea, .dark .form-field select {
+        background-color: #374151; border-color: #4b5563; color: #f3f4f6;
+    }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+        outline: none; border-color: theme('colors.accent');
+        box-shadow: 0 0 0 3px theme('colors.accent' / 0.3);
+    }
+</style>
+{% endblock %}

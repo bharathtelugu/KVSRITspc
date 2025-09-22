@@ -2,120 +2,211 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
-# --- USER AND TEAM MODELS (Updated with Roles & Skills) ---
+# ==============================================================================
+# 1. USER & PROFILE MODELS
+# ==============================================================================
 class UserProfile(models.Model):
-    # This is the corrected ROLE_CHOICES definition
     ROLE_CHOICES = [
-        ('Participant', 'Participant'),
-        ('Volunteer', 'Volunteer'),
-        ('Technical Support', 'Technical Support'),
-        ('Technical Lead', 'Technical Lead'),
-        ('Lead Organizer', 'Lead Organizer'),
         ('Event Manager', 'Event Manager'),
+        ('Lead Organizer', 'Lead Organizer'),
+        ('Technical Lead', 'Technical Lead'),
+        ('Judge', 'Judge'),
+        ('Technical Support', 'Technical Support'),
+        ('Volunteer', 'Volunteer'),
+        ('Participant', 'Participant'),
     ]
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    college = models.CharField(max_length=255, blank=True, null=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Participant')
-    skills = models.TextField(blank=True, null=True, help_text="Comma-separated skills, e.g., Python, UI/UX, Data Analysis")
-    role_preference = models.CharField(max_length=100, blank=True, null=True, help_text="e.g., Developer, Designer, Researcher")
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user_role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Participant')
+    
+    # Participant-specific profile details
+    student_roll_number = models.CharField(max_length=20, blank=True, null=True)
+    about = models.TextField(blank=True, null=True)
+    highlight = models.CharField(max_length=255, blank=True, null=True, help_text="e.g., 'AI Enthusiast | Web Developer'")
+    branch = models.CharField(max_length=50, blank=True, null=True, help_text="e.g., 'CSE', 'EEE'")
+    year_of_study = models.PositiveSmallIntegerField(blank=True, null=True, help_text="e.g., 1, 2, 3, 4")
+    skills = models.TextField(blank=True, null=True, help_text="General skills, comma-separated")
+    technical_skills = models.TextField(blank=True, null=True, help_text="Programming languages, tools, etc.")
+    github_link = models.URLField(blank=True, null=True)
+    linkedin_link = models.URLField(blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.get_role_display()}"
+        return f"{self.user.username} ({self.get_user_role_display()})"
 
-# --- CORE EVENT MANAGEMENT MODELS (Remains the same) ---
+# ==============================================================================
+# 2. CORE EVENT MODELS
+# ==============================================================================
 class Event(models.Model):
+    MODE_CHOICES = [('physical', 'Physical'), ('virtual', 'Virtual'), ('hybrid', 'Hybrid')]
     STATUS_CHOICES = [('draft', 'Draft'), ('published', 'Published'), ('completed', 'Completed'), ('canceled', 'Canceled')]
-    
-    title = models.CharField(max_length=200)
-    hero_section_details = models.TextField(help_text="Short, catchy description for the main page.")
+
+    event_name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, help_text="A shorter title for headers")
+    hero_section_details = models.TextField()
     registration_link = models.URLField(blank=True, null=True)
-    what_is_event = models.TextField(verbose_name="What is the Event?")
-    about_event = models.TextField(verbose_name="About the Event")
-    benefits = models.TextField(help_text="List the key benefits for participants.")
+    why_participate = models.TextField(blank=True, null=True)
+    what_is_event = models.TextField(blank=True, null=True)
+    about_event = models.TextField(blank=True, null=True)
     
     registration_start = models.DateTimeField()
     registration_end = models.DateTimeField()
     event_start = models.DateTimeField()
     event_end = models.DateTimeField()
-
-    venue_name = models.CharField(max_length=200)
-    venue_location = models.CharField(max_length=300)
+    
+    event_mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='physical')
+    contact_email = models.EmailField()
+    contact_whatsapp = models.CharField(max_length=20, blank=True, null=True)
+    contact_instagram = models.URLField(blank=True, null=True)
+    contact_linkedin = models.URLField(blank=True, null=True)
+    benefits = models.TextField(blank=True, null=True)
+    
+    venue_name = models.CharField(max_length=200, blank=True, null=True)
+    venue_location = models.CharField(max_length=300, blank=True, null=True)
     venue_google_map_link = models.URLField(blank=True, null=True)
 
-    contact_email = models.EmailField()
-    contact_whatsapp = models.CharField(max_length=20, blank=True, help_text="e.g., +91XXXXXXXXXX")
-    contact_instagram = models.URLField(blank=True)
-    contact_linkedin = models.URLField(blank=True)
-
     event_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_events')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title
+        return self.event_name
 
-# --- NEW TEAM MANAGEMENT MODELS ---
-class Team(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='teams')
-    name = models.CharField(max_length=100)
-    team_code = models.CharField(max_length=8, unique=True, default=uuid.uuid4().hex.upper()[0:8])
-    leader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='led_teams')
-    max_size = models.PositiveIntegerField(default=5)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('event', 'name')
-
-    def __str__(self):
-        return f"{self.name} ({self.event.title})"
-
-class TeamMember(models.Model):
-    STATUS_CHOICES = [('pending', 'Pending'), ('accepted', 'Accepted')]
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='members')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='team_memberships')
-    role = models.CharField(max_length=50, default='Member') # e.g., Developer, Designer
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='accepted')
-    joined_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('team', 'user')
-
-    def __str__(self):
-        return f"{self.user.username} in {self.team.name}"
-
-class TeamSubmission(models.Model):
-    team = models.OneToOneField(Team, on_delete=models.CASCADE, related_name='submission')
-    project_title = models.CharField(max_length=200)
-    project_description = models.TextField()
-    repo_link = models.URLField(blank=True, null=True)
-    demo_link = models.URLField(blank=True, null=True)
-    submitted_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Submission for {self.team.name}"
-
-
-# --- RELATED EVENT MODELS (Remains the same) ---
-class FAQ(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='faqs')
-    question = models.CharField(max_length=300)
-    answer = models.TextField()
+# ==============================================================================
+# 3. EVENT DETAIL MODELS (Linked to Event)
+# ==============================================================================
+class ProblemStatement(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='problem_statements')
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    time_to_unlock = models.DateTimeField(help_text="The problem statement will be visible after this time.")
 
 class Schedule(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='schedules')
     day_number = models.PositiveIntegerField()
     date = models.DateField()
-    
-    class Meta:
-        ordering = ['day_number']
+    description = models.TextField(blank=True, null=True)
+    class Meta: ordering = ['day_number']
 
 class SubSchedule(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name='sub_schedules')
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    activity = models.CharField(max_length=255)
+    time_start = models.TimeField()
+    time_end = models.TimeField()
+    activity_description = models.CharField(max_length=255)
+    class Meta: ordering = ['time_start']
 
-    class Meta:
-        ordering = ['start_time']
+class Eligibility(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='eligibility')
+    description = models.TextField()
 
+class HowToParticipateStep(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='steps')
+    step_number = models.PositiveIntegerField()
+    step_description = models.TextField()
+    class Meta: ordering = ['step_number']
+
+class FAQ(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='faqs')
+    question = models.CharField(max_length=255)
+    answer = models.TextField()
+
+class EventMedia(models.Model):
+    event = models.OneToOneField(Event, on_delete=models.CASCADE, related_name='media')
+    banner_image = models.ImageField(upload_to='event_media/')
+    logo = models.ImageField(upload_to='event_media/')
+    
+class Organizer(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='organizers')
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    contact_info = models.CharField(max_length=200, blank=True, null=True)
+
+class Certificate(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='certificates')
+    template_link = models.URLField()
+    eligibility_criteria = models.TextField()
+
+class Resource(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='resources')
+    title = models.CharField(max_length=255)
+    file_link = models.FileField(upload_to='event_resources/')
+
+class Feedback(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='feedback')
+    participant = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField()
+    comments = models.TextField(blank=True, null=True)
+
+# ==============================================================================
+# 4. TEAM & SUBMISSION MODELS
+# ==============================================================================
+class Team(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='teams')
+    team_name = models.CharField(max_length=100)
+    team_code = models.CharField(max_length=8, unique=True, default=uuid.uuid4().hex.upper()[0:8])
+    leader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='led_teams')
+    max_size = models.PositiveIntegerField(default=5)
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta: unique_together = ('event', 'team_name')
+
+class TeamMember(models.Model):
+    STATUS_CHOICES = [('pending', 'Pending'), ('accepted', 'Accepted')]
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='members')
+    participant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='team_memberships')
+    role = models.CharField(max_length=50, default='Member')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    joined_at = models.DateTimeField(auto_now_add=True)
+    class Meta: unique_together = ('team', 'participant')
+
+class Submission(models.Model):
+    team = models.OneToOneField(Team, on_delete=models.CASCADE, related_name='submission')
+    problem_statement = models.ForeignKey(ProblemStatement, on_delete=models.SET_NULL, null=True)
+    project_title = models.CharField(max_length=200)
+    project_description = models.TextField()
+    repo_link = models.URLField(blank=True, null=True)
+    demo_link = models.URLField(blank=True, null=True)
+    image_upload = models.ImageField(upload_to='submissions/', blank=True, null=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+class TeamInvite(models.Model):
+    STATUS_CHOICES = [('pending', 'Pending'), ('accepted', 'Accepted'), ('declined', 'Declined')]
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='invites')
+    invited_email = models.EmailField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    invited_at = models.DateTimeField(auto_now_add=True)
+
+# ==============================================================================
+# 5. JUDGING & NOTIFICATION MODELS
+# ==============================================================================
+class JudgingScore(models.Model):
+    judge = models.ForeignKey(User, on_delete=models.CASCADE, related_name='scores_given')
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, related_name='scores')
+    score = models.FloatField()
+    feedback = models.TextField(blank=True, null=True)
+    class Meta: unique_together = ('judge', 'submission')
+
+class Announcement(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='announcements')
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+# ==============================================================================
+# 6. INVITE CODE MODEL
+# ==============================================================================
+class InviteCode(models.Model):
+    code = models.CharField(max_length=20, unique=True)
+    is_used = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(blank=True, null=True)
+    uses_count = models.PositiveIntegerField(default=0)
+    max_uses = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return self.code

@@ -1,0 +1,122 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Participant Hub{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <div class="mb-8">
+        <h1 class="text-4xl font-black mb-2">Participant Hub</h1>
+        <p class="text-lg text-light-text-secondary dark:text-dark-text-secondary">Welcome back, {{ request.user.first_name }}! Manage your profile, team, and submission from here.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+        <aside class="lg:col-span-1">
+            <div class="card p-6 border border-gray-200 dark:border-gray-800 sticky top-24">
+                <div class="text-center mb-6">
+                    <img src="https://placehold.co/128x128/1E90FF/E0E0E0?text={{ request.user.first_name|first|upper }}" alt="Profile Picture" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent">
+                    <h2 class="text-2xl font-bold">{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">{{ request.user.email }}</p>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-light-text-secondary dark:text-dark-text-secondary">Roll Number:</span>
+                        <span>{{ request.user.userprofile.student_roll_number }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-light-text-secondary dark:text-dark-text-secondary">Branch:</span>
+                        <span>{{ request.user.userprofile.branch }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-light-text-secondary dark:text-dark-text-secondary">Year:</span>
+                        <span>{{ request.user.userprofile.year_of_study }}</span>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <a href="{% url 'profile' %}" class="w-full block text-center bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-semibold py-3 px-4 rounded-lg">
+                        Edit Full Profile
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="lg:col-span-2 space-y-8">
+            
+            <div class="card p-8 border border-gray-200 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-6">Team Status</h2>
+                
+                {% if team %}
+                    <div class="bg-gray-100 dark:bg-gray-900/50 p-6 rounded-lg">
+                        <p class="text-lg">You are a member of team:</p>
+                        <h3 class="text-3xl font-bold text-accent my-2">{{ team.team_name }}</h3>
+                        <div class="mt-4">
+                            <p class="font-semibold">Invite Code:</p>
+                            <div class="bg-gray-200 dark:bg-gray-800 p-3 rounded-lg text-center font-mono tracking-widest text-lg mt-1">
+                                {{ team.team_code }}
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <h4 class="font-semibold mb-2">Current Members ({{ team.members.count }}/{{ team.max_size }}):</h4>
+                            <ul class="space-y-2">
+                                {% for member in team.members.all %}
+                                <li class="flex items-center p-2 bg-gray-200 dark:bg-gray-800 rounded-md">
+                                    <i data-feather="user" class="w-5 h-5 mr-3 text-accent"></i>
+                                    <span>{{ member.participant.first_name }} {{ member.participant.last_name }}</span>
+                                    {% if member.role == 'Leader' %}
+                                        <span class="ml-auto text-xs font-bold uppercase bg-accent text-dark-bg px-2 py-1 rounded-full">Leader</span>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="mb-6">You have not joined a team yet. You can either create your own or join one using an invitation code.</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Create a New Team</h3>
+                            <form action="{% url 'team_create' %}" method="POST" class="space-y-4 form-field">
+                                {% csrf_token %}
+                                {{ team_create_form.as_p }}
+                                <button type="submit" class="w-full bg-links hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg">Create Team</button>
+                            </form>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Join an Existing Team</h3>
+                            <form action="{% url 'team_join' %}" method="POST" class="space-y-4 form-field">
+                                {% csrf_token %}
+                                {{ team_join_form.as_p }}
+                                <button type="submit" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg">Join with Code</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="card p-8 border border-gray-200 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-6">Project Submission</h2>
+                {% if team %}
+                    {% if team.submission %}
+                         <div class="bg-green-900/50 text-green-300 p-4 rounded-lg text-center">
+                            <h3 class="font-bold text-lg">Your project has been submitted!</h3>
+                            <p>You can still make changes until the deadline.</p>
+                            <a href="#" class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg">Edit Submission</a>
+                        </div>
+                    {% else %}
+                        <p class="mb-4">Once your team is ready, the team leader can submit your project here.</p>
+                        {% if request.user == team.leader %}
+                            <a href="#" class="w-full block text-center bg-accent hover:opacity-90 text-dark-bg font-bold py-3 px-4 rounded-lg">
+                                Submit Your Project
+                            </a>
+                        {% else %}
+                            <p class="text-center font-semibold text-yellow-400 p-4 bg-yellow-900/50 rounded-lg">Only the team leader can submit the project.</p>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">You must be part of a team to submit a project.</p>
+                {% endif %}
+            </div>
+
+        </main>
+    </div>
+</div>
+{% endblock %}
