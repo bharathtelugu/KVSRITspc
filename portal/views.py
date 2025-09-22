@@ -1,3 +1,8 @@
+from django.shortcuts import render
+from django.http import HttpResponseServerError
+# Global error handler
+def custom_error_view(request, exception=None):
+    return render(request, 'portal/error.html', status=500)
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -6,12 +11,15 @@ from django.core.exceptions import PermissionDenied
 from functools import wraps
 from django.contrib.auth.forms import AuthenticationForm
 from django.db import transaction
+from django.utils import timezone
 
-# Import all necessary models and forms
-from .models import Event, UserProfile, Team, TeamMember, Submission, Announcement, ProblemStatement
+# Import all necessary models and forms from your application
+from .models import (
+    Event, UserProfile, Team, TeamMember, Submission, Announcement
+)
 from .forms import (
     ParticipantRegistrationForm, UserProfileForm, TeamCreateForm, 
-    TeamJoinForm, SubmissionForm, AnnouncementForm
+    TeamJoinForm, SubmissionForm, AnnouncementForm, EventForm
 )
 
 # ==============================================================================
@@ -51,12 +59,39 @@ def event_detail_view(request, event_id):
     """
     Displays all details for a single event.
     """
-    event = get_object_or_404(Event.objects.prefetch_related('schedules__sub_schedules', 'faqs'), id=event_id, event_status='published')
+    event = get_object_or_404(
+        Event.objects.prefetch_related(
+            'schedules__sub_schedules', 
+            'faqs',
+            'eligibility',
+            'steps',
+            'organizers'
+        ), 
+        id=event_id, 
+        event_status='published'
+    )
     return render(request, 'portal/event_detail.html', {'event': event})
+
+def register_view(request):
+    """
+    Handles registration for new participants using a detailed form.
+    """
+    if request.user.is_authenticated:
+        return redirect('home')
+    if request.method == 'POST':
+        form = ParticipantRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f"Registration successful! Welcome, {user.first_name}.")
+            return redirect('participant_dashboard')
+    else:
+        form = ParticipantRegistrationForm()
+    return render(request, 'portal/register.html', {'form': form})
 
 def login_view(request):
     """
-    Handles user login and redirects them based on their role.
+    Handles user login and redirects them to the appropriate dashboard based on their role.
     """
     if request.user.is_authenticated:
         return redirect('home')
@@ -68,16 +103,7 @@ def login_view(request):
             login(request, user)
             messages.success(request, f"Welcome back, {user.first_name or user.username}!")
             
-            # Redirect logic based on user role
-            try:
-                role = user.userprofile.user_role
-                if role == 'Event Manager':
-                    return redirect('manager_dashboard')
-                if role == 'Judge':
-                    return redirect('judge_dashboard')
-                return redirect('participant_dashboard')
-            except UserProfile.DoesNotExist:
-                return redirect('home') # Fallback for users without profiles
+            return redirect('home')
     else:
         form = AuthenticationForm()
     return render(request, 'portal/login.html', {'form': form})
@@ -88,27 +114,48 @@ def logout_view(request):
     messages.info(request, "You have been successfully logged out.")
     return redirect('home')
 
+def index_view(request):
+    """
+                if user.is_superuser:
+                    return redirect('/admin/')
+                return redirect('home')
+    If no event exists, show a message.
+    """
+    event = Event.objects.order_by('-id').first()
+    countdown = None
+    event_message = None
+    now = timezone.now()
+    if not event:
+        event_message = "Event will be updated soon."
+    else:
+        if hasattr(event, 'registration_end') and now < event.registration_end:
+            countdown = {'type': 'registration_end', 'target': event.registration_end}
+        elif hasattr(event, 'event_start') and now < event.event_start:
+            countdown = {'type': 'event_start', 'target': event.event_start}
+        elif hasattr(event, 'problem_statements') and event.problem_statements.exists():
+            problem = event.problem_statements.order_by('time_to_unlock').first()
+            if problem and now < problem.time_to_unlock:
+                countdown = {'type': 'problem_release', 'target': problem.time_to_unlock}
+    return render(request, 'portal/index.html', {'event': event, 'countdown': countdown, 'event_message': event_message, 'now': now})
+
 # ==============================================================================
-# 3. PARTICIPANT VIEWS
+# 3. PARTICIPANT-SPECIFIC VIEWS
 # ==============================================================================
 @login_required
 @role_required(['Participant'])
 def participant_dashboard_view(request):
     """
-    Main dashboard for participants. Shows team status and allows creating/joining teams.
+    Main hub for participants. Shows team status and allows creating/joining teams.
     """
-    profile = request.user.userprofile
     try:
-        team_membership = TeamMember.objects.select_related('team').get(participant=request.user)
+        team_membership = TeamMember.objects.select_related('team__event').get(participant=request.user)
         team = team_membership.team
     except TeamMember.DoesNotExist:
         team = None
 
-    # For simplicity, we assume one active event
     active_event = Event.objects.filter(event_status='published').first()
 
     context = {
-        'profile': profile,
         'team': team,
         'active_event': active_event,
         'team_create_form': TeamCreateForm(),
@@ -136,38 +183,39 @@ def profile_view(request):
 @role_required(['Participant'])
 @transaction.atomic
 def team_create_view(request):
+    """
+    Handles the POST request to create a new team.
+    """
     if request.method == 'POST':
         form = TeamCreateForm(request.POST)
         active_event = Event.objects.filter(event_status='published').first()
         if form.is_valid() and active_event:
-            # Check if user is already in a team
             if TeamMember.objects.filter(participant=request.user, team__event=active_event).exists():
                 messages.error(request, "You are already in a team for this event.")
-                return redirect('participant_dashboard')
-            
-            team = form.save(commit=False)
-            team.event = active_event
-            team.leader = request.user
-            team.save()
-            TeamMember.objects.create(team=team, participant=request.user, status='accepted', role='Leader')
-            messages.success(request, f"Team '{team.team_name}' created successfully! Your team code is {team.team_code}")
-            return redirect('participant_dashboard')
+            else:
+                team = form.save(commit=False)
+                team.event = active_event
+                team.leader = request.user
+                team.save()
+                TeamMember.objects.create(team=team, participant=request.user, status='accepted', role='Leader')
+                messages.success(request, f"Team '{team.team_name}' created successfully! Your invite code is {team.team_code}")
     return redirect('participant_dashboard')
 
 @login_required
 @role_required(['Participant'])
 def team_join_view(request):
+    """
+    Handles the POST request to join an existing team.
+    """
     if request.method == 'POST':
         form = TeamJoinForm(request.POST)
         active_event = Event.objects.filter(event_status='published').first()
         if form.is_valid() and active_event:
             team_code = form.cleaned_data['team_code']
             try:
-                team_to_join = Team.objects.get(team_code=team_code, event=active_event)
-                # Check if user is already in a team
+                team_to_join = Team.objects.get(team_code__iexact=team_code, event=active_event)
                 if TeamMember.objects.filter(participant=request.user, team__event=active_event).exists():
                     messages.error(request, "You are already in a team for this event.")
-                # Check if team is full
                 elif team_to_join.members.count() >= team_to_join.max_size:
                      messages.error(request, f"Team '{team_to_join.team_name}' is already full.")
                 else:
@@ -177,6 +225,16 @@ def team_join_view(request):
                 messages.error(request, "Invalid team code. Please try again.")
     return redirect('participant_dashboard')
 
+@login_required
+def notifications_view(request):
+    """
+    Display user notifications, marking them as read.
+    """
+    if not request.user.is_authenticated:
+        return redirect('login')
+    notifications = request.user.notifications.order_by('-created_at')
+    request.user.notifications.filter(is_read=False).update(is_read=True, updated_at=timezone.now())
+    return render(request, 'portal/notifications.html', {'notifications': notifications})
 
 # ==============================================================================
 # 4. EVENT MANAGER & JUDGE VIEWS
@@ -184,35 +242,18 @@ def team_join_view(request):
 @login_required
 @role_required(['Event Manager'])
 def manager_dashboard_view(request):
-    """Main dashboard for Event Managers, linking to management tasks."""
+    """
+    Main dashboard for Event Managers, linking to various management tasks.
+    """
     return render(request, 'portal/manager_dashboard.html')
-
-@login_required
-@role_required(['Event Manager'])
-def manage_announcements_view(request):
-    """Allows Event Managers to create and view announcements."""
-    announcements = Announcement.objects.all().order_by('-created_at')
-    if request.method == 'POST':
-        form = AnnouncementForm(request.POST)
-        if form.is_valid():
-            announcement = form.save(commit=False)
-            event = Event.objects.filter(event_status='published').first()
-            if event:
-                announcement.event = event
-                announcement.save()
-                messages.success(request, "Announcement published successfully.")
-                return redirect('manage_announcements')
-    else:
-        form = AnnouncementForm()
-    return render(request, 'portal/manage_announcements.html', {'announcements': announcements, 'form': form})
 
 @login_required
 @role_required(['Judge'])
 def judge_dashboard_view(request):
-    """Main dashboard for Judges."""
-    # Logic to list submissions for judging would go here
+    """
+    Main dashboard for Judges to view and score submissions.
+    """
     return render(request, 'portal/judge_dashboard.html')
 
-# NOTE: Views for managing participants, teams, submissions, etc., from the manager
-# dashboard would be added here, similar to the manage_announcements_view.
+# (Add other manager/judge specific views here as needed)
 

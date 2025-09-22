@@ -1,0 +1,181 @@
+{% comment %} Event Content Partial - Used in index.html or event detail pages
+{% endcomment %}
+<div class="event-content max-w-3xl mx-auto py-8">
+  <!-- Hero Section -->
+  <section class="mb-8 bg-white dark:bg-dark-bg rounded-lg shadow p-6">
+    <h2 class="text-3xl font-bold mb-2 text-links">{{ event.title }}</h2>
+    <p
+      class="mb-4 text-lg text-light-text-secondary dark:text-dark-text-secondary"
+    >
+      {{ event.hero_section_details }}
+    </p>
+    {% if event.registration_link %}
+    <a
+      href="{{ event.registration_link }}"
+      class="bg-links text-white px-6 py-3 rounded-lg font-semibold shadow hover:scale-105 transition-transform"
+      >Register Now</a
+    >
+    {% endif %}
+  </section>
+
+  <!-- Countdown Section -->
+  <section class="mb-8 bg-light-bg dark:bg-dark-bg rounded-lg shadow p-6">
+    {% if event.event_start %}
+    <strong class="text-accent">Event Starts:</strong> {{
+    event.event_start|date:"M d, Y H:i" }}<br />
+    {% endif %} {% if event.registration_end %}
+    <strong class="text-accent">Registration Ends:</strong> {{
+    event.registration_end|date:"M d, Y H:i" }}<br />
+    {% endif %}
+  </section>
+
+  <!-- About Section -->
+  <section class="mb-8 bg-white dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-links">About</h3>
+    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+      {{ event.about_description }}
+    </p>
+  </section>
+
+  <!-- Why Participate / Benefits -->
+  <section class="mb-8 bg-light-bg dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-accent">Why Participate?</h3>
+    {% if event.benefits.all %}
+    <ul
+      class="list-disc ml-6 text-light-text-secondary dark:text-dark-text-secondary"
+    >
+      {% for benefit in event.benefits.all %}
+      <li>{{ benefit.description }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No benefits listed yet.</p>
+    {% endif %}
+  </section>
+
+  <!-- How to Participate Steps -->
+  <section class="mb-8 bg-white dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-links">How to Participate</h3>
+    {% if event.steps.all %}
+    <ol
+      class="list-decimal ml-6 text-light-text-secondary dark:text-dark-text-secondary"
+    >
+      {% for step in event.steps.all %}
+      <li>{{ step.description }}</li>
+      {% endfor %}
+    </ol>
+    {% else %}
+    <p>Steps will be announced soon.</p>
+    {% endif %}
+  </section>
+
+  <!-- Problem Statements -->
+  <section class="mb-8 bg-light-bg dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-accent">Problem Statements</h3>
+    {% if event.problem_statements.all %}
+    <div class="grid gap-4 md:grid-cols-2">
+      {% for ps in event.problem_statements.all %}
+      <div class="border rounded-lg p-4 bg-white dark:bg-dark-bg">
+        <strong class="text-links">{{ ps.title }}</strong><br />
+        <span class="text-light-text-secondary dark:text-dark-text-secondary"
+          >{{ ps.description }}</span
+        >
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>Problem statements will be released soon.</p>
+    {% endif %}
+  </section>
+
+  <!-- Rewards & Benefits -->
+  <section class="mb-8 bg-white dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-links">Rewards & Benefits</h3>
+    {% if event.benefits.all %}
+    <ul
+      class="list-disc ml-6 text-light-text-secondary dark:text-dark-text-secondary"
+    >
+      {% for benefit in event.benefits.all %}
+      <li>{{ benefit.reward }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>Rewards will be announced soon.</p>
+    {% endif %}
+  </section>
+
+  <!-- Contact Us -->
+  <section class="mb-8 bg-light-bg dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-accent">Contact Us</h3>
+    <ul class="text-light-text-secondary dark:text-dark-text-secondary">
+      <li>Email: {{ event.contact_email }}</li>
+      <li>WhatsApp: {{ event.contact_whatsapp }}</li>
+      <li>
+        Instagram:
+        <a
+          href="{{ event.contact_instagram }}"
+          target="_blank"
+          class="text-links underline"
+          >{{ event.contact_instagram }}</a
+        >
+      </li>
+      <li>
+        LinkedIn:
+        <a
+          href="{{ event.contact_linkedin }}"
+          target="_blank"
+          class="text-links underline"
+          >{{ event.contact_linkedin }}</a
+        >
+      </li>
+    </ul>
+  </section>
+
+  <!-- Event Organizer -->
+  <section class="mb-8 bg-white dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-links">Organizers</h3>
+    {% if event.organizers.all %}
+    <ul
+      class="list-disc ml-6 text-light-text-secondary dark:text-dark-text-secondary"
+    >
+      {% for organizer in event.organizers.all %}
+      <li>{{ organizer.name }} ({{ organizer.role }})</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>Organizers will be announced soon.</p>
+    {% endif %}
+  </section>
+
+  <!-- FAQ -->
+  <section class="mb-8 bg-light-bg dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-accent">FAQs</h3>
+    {% if event.faqs.all %}
+    <ul
+      class="list-disc ml-6 text-light-text-secondary dark:text-dark-text-secondary"
+    >
+      {% for faq in event.faqs.all %}
+      <li><strong>{{ faq.question }}</strong><br />{{ faq.answer }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No FAQs available yet.</p>
+    {% endif %}
+  </section>
+
+  <!-- Venue & Connect with Us -->
+  <section class="mb-8 bg-white dark:bg-dark-bg rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold mb-2 text-links">Venue</h3>
+    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+      {{ event.venue_name }}<br />{{ event.venue_location }}
+    </p>
+    {% if event.venue_google_map_link %}
+    <a
+      href="{{ event.venue_google_map_link }}"
+      target="_blank"
+      class="text-links underline"
+      >View on Google Maps</a
+    >
+    {% endif %}
+  </section>
+</div>

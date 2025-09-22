@@ -2,17 +2,26 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
+# Event mode and status choices (module level)
+MODE_CHOICES = [
+    ('physical', 'Physical'),
+    ('virtual', 'Virtual'),
+    ('hybrid', 'Hybrid'),
+]
+STATUS_CHOICES = [
+    ('draft', 'Draft'),
+    ('published', 'Published'),
+    ('completed', 'Completed'),
+    ('canceled', 'Canceled'),
+]
+
 # ==============================================================================
 # 1. USER & PROFILE MODELS
 # ==============================================================================
 class UserProfile(models.Model):
     ROLE_CHOICES = [
-        ('Event Manager', 'Event Manager'),
-        ('Lead Organizer', 'Lead Organizer'),
-        ('Technical Lead', 'Technical Lead'),
+        ('Admin', 'Admin'),
         ('Judge', 'Judge'),
-        ('Technical Support', 'Technical Support'),
-        ('Volunteer', 'Volunteer'),
         ('Participant', 'Participant'),
     ]
     
@@ -45,27 +54,41 @@ class Event(models.Model):
     title = models.CharField(max_length=255, help_text="A shorter title for headers")
     hero_section_details = models.TextField()
     registration_link = models.URLField(blank=True, null=True)
-    why_participate = models.TextField(blank=True, null=True)
-    what_is_event = models.TextField(blank=True, null=True)
-    about_event = models.TextField(blank=True, null=True)
-    
-    registration_start = models.DateTimeField()
-    registration_end = models.DateTimeField()
-    event_start = models.DateTimeField()
-    event_end = models.DateTimeField()
-    
-    event_mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='physical')
-    contact_email = models.EmailField()
-    contact_whatsapp = models.CharField(max_length=20, blank=True, null=True)
-    contact_instagram = models.URLField(blank=True, null=True)
-    contact_linkedin = models.URLField(blank=True, null=True)
-    benefits = models.TextField(blank=True, null=True)
-    
+    # About Event
+    about_item_name = models.CharField(max_length=255, blank=True, null=True)
+    about_description = models.TextField(blank=True, null=True)
+    # Why Participate (multiple items)
+    # See EventBenefit model below
+    # What is Event
+    what_item_name = models.CharField(max_length=255, blank=True, null=True)
+    what_description = models.TextField(blank=True, null=True)
+
+    # Venue fields
     venue_name = models.CharField(max_length=200, blank=True, null=True)
     venue_location = models.CharField(max_length=300, blank=True, null=True)
     venue_google_map_link = models.URLField(blank=True, null=True)
 
-    event_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    # Connect with Us fields
+    contact_email = models.EmailField(blank=True, null=True)
+    contact_whatsapp = models.CharField(max_length=20, blank=True, null=True)
+    contact_instagram = models.URLField(blank=True, null=True)
+    contact_linkedin = models.URLField(blank=True, null=True)
+    event_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    event_start = models.DateTimeField(null=True, blank=True)
+    event_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+class EventBenefit(models.Model):
+    event = models.ForeignKey(Event, related_name='benefits', on_delete=models.CASCADE)
+    item_name = models.CharField(max_length=255)
+    description = models.TextField()
+
+    
+    registration_start = models.DateTimeField()
+    registration_start = models.DateTimeField()
+    registration_end = models.DateTimeField()
+    event_start = models.DateTimeField()
+    event_end = models.DateTimeField()
+    event_mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='physical')
+    benefits = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -83,17 +106,21 @@ class ProblemStatement(models.Model):
 
 class Schedule(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='schedules')
+    schedule_id = models.AutoField(primary_key=True)
     day_number = models.PositiveIntegerField()
+    title = models.CharField(max_length=255)
     date = models.DateField()
     description = models.TextField(blank=True, null=True)
-    class Meta: ordering = ['day_number']
+    class Meta:
+        ordering = ['day_number']
 
 class SubSchedule(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name='sub_schedules')
-    time_start = models.TimeField()
-    time_end = models.TimeField()
-    activity_description = models.CharField(max_length=255)
-    class Meta: ordering = ['time_start']
+    title = models.CharField(max_length=255)
+    time = models.TimeField()
+    description = models.TextField()
+    class Meta:
+        ordering = ['time']
 
 class Eligibility(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='eligibility')

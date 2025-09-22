@@ -1,66 +1,71 @@
-{% extends 'portal/base.html' %}
+{% extends 'portal/base.html' %} {% block title %}Login - KVSRITspc AI
+Hackathon{% endblock %} {% block content %}
+<div
+  class="container mx-auto px-6 py-12 flex items-center justify-center min-h-[calc(100vh-200px)]"
+>
+  <div class="max-w-md w-full">
+    <div
+      class="card rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800"
+    >
+      <div class="p-8">
+        <h2 class="text-2xl font-bold text-center mb-6">
+          Login to Your Account
+        </h2>
+        <form method="POST" action="{% url 'login' %}" class="space-y-6">
+          {% csrf_token %}
+          <style>
+            /* Custom styles for Django form rendering */
+            .form-field p {
+              margin: 0;
+            }
+            .form-field label {
+              display: block;
+              margin-bottom: 0.5rem;
+              font-weight: 600;
+              color: theme("colors.light-text");
+            }
+            .dark .form-field label {
+              color: theme("colors.dark-text");
+            }
+            .form-field input {
+              width: 100%;
+              border-radius: 0.5rem;
+              padding: 0.75rem 1rem;
+              transition: border-color 0.2s, box-shadow 0.2s;
+              /* Light mode input styles */
+              background-color: #f3f4f6;
+              border: 1px solid #d1d5db;
+              color: #111827;
+            }
+            .dark .form-field input {
+              /* Dark mode input styles */
+              background-color: #374151;
+              border-color: #4b5563;
+              color: #f3f4f6;
+            }
+            .form-field input:focus {
+              outline: none;
+              border-color: theme("colors.accent");
+              box-shadow: 0 0 0 3px theme("colors.accent" / 0.3);
+            }
+          </style>
 
-{% block title %}Login - KVSRITspc AI Hackathon{% endblock %}
+          <!-- Render the form fields -->
+          <div class="form-field">{{ form.as_p }}</div>
 
-{% block content %}
-<div class="container mx-auto px-6 py-12 flex items-center justify-center min-h-[calc(100vh-200px)]">
-    <div class="max-w-md w-full">
-        <div class="card rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800">
-            <div class="p-8">
-                <h2 class="text-2xl font-bold text-center mb-6">Login to Your Account</h2>
-                <form method="POST" action="{% url 'login' %}" class="space-y-6">
-                    {% csrf_token %}
-                    <style>
-                        /* Custom styles for Django form rendering */
-                        .form-field p { margin: 0; }
-                        .form-field label { 
-                            display: block; 
-                            margin-bottom: 0.5rem; 
-                            font-weight: 600; 
-                            color: theme('colors.light-text');
-                        }
-                        .dark .form-field label {
-                            color: theme('colors.dark-text');
-                        }
-                        .form-field input {
-                            width: 100%; 
-                            border-radius: 0.5rem; 
-                            padding: 0.75rem 1rem;
-                            transition: border-color 0.2s, box-shadow 0.2s;
-                            /* Light mode input styles */
-                            background-color: #f3f4f6; 
-                            border: 1px solid #d1d5db; 
-                            color: #111827;
-                        }
-                        .dark .form-field input {
-                            /* Dark mode input styles */
-                            background-color: #374151; 
-                            border-color: #4b5563; 
-                            color: #f3f4f6;
-                        }
-                        .form-field input:focus {
-                            outline: none;
-                            border-color: theme('colors.accent');
-                            box-shadow: 0 0 0 3px theme('colors.accent' / 0.3);
-                        }
-                    </style>
+          <div>
+            <button
+              class="w-full bg-accent hover:opacity-90 text-dark-bg font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-all duration-300"
+              type="submit"
+            >
+              Sign In
+            </button>
+          </div>
 
-                    <!-- Render the form fields -->
-                    <div class="form-field">{{ form.as_p }}</div>
-
-                    <div>
-                        <button class="w-full bg-accent hover:opacity-90 text-dark-bg font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-all duration-300" type="submit">
-                            Sign In
-                        </button>
-                    </div>
-
-                     <p class="text-center text-gray-600 dark:text-gray-400 text-sm mt-6">
-                        Don't have an account? <a href="{% url 'register' %}" class="font-semibold text-links hover:underline">Register here</a>.
-                    </p>
-                </form>
-            </div>
-        </div>
+          <!-- Registration is admin-only. No public registration link. -->
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
-

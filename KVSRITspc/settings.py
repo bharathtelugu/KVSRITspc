@@ -1,3 +1,5 @@
+# Error handler configuration
+HANDLER500 = 'portal.views.custom_error_view'
 """
 Django settings for KVSRITspc project.
 

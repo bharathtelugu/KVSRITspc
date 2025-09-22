@@ -1,0 +1,80 @@
+{% extends 'portal/base.html' %} {% block title %}Judge Dashboard{% endblock %}
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+  <h1 class="text-4xl font-black mb-8">Judge Dashboard</h1>
+  <p
+    class="mb-6 text-lg text-light-text-secondary dark:text-dark-text-secondary"
+  >
+    Welcome, {{ request.user.first_name }}! Review and score participant
+    submissions below.
+  </p>
+  {% if notifications %}
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold mb-4">Notifications</h2>
+    <ul class="space-y-2">
+      {% for notification in notifications %}
+      <li
+        class="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg flex justify-between items-center"
+      >
+        <span>{{ notification.message }}</span>
+        <span class="text-xs text-gray-500"
+          >{{ notification.created_at|date:"F j, Y H:i" }}</span
+        >
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for submission in submissions %}
+    <div
+      class="card p-6 border border-gray-200 dark:border-gray-800 flex flex-col hover:border-accent transition-colors duration-300"
+    >
+      <h2 class="text-2xl font-bold mb-2 text-accent">
+        {{ submission.project_title }}
+      </h2>
+      <p class="mb-2">
+        Team: <span class="font-semibold">{{ submission.team.team_name }}</span>
+      </p>
+      <p class="mb-4">
+        Submitted: {{ submission.submitted_at|date:"F j, Y H:i" }}
+      </p>
+      {% if submission.team.event.registration_end and
+      submission.team.event.registration_end > now %}
+      <span class="font-semibold">Registration ends in:</span>
+      <span
+        class="countdown"
+        data-target="{{ submission.team.event.registration_end|date:'c' }}"
+      ></span>
+      {% elif submission.team.event.event_start and
+      submission.team.event.event_start > now %}
+      <span class="font-semibold">Event starts in:</span>
+      <span
+        class="countdown"
+        data-target="{{ submission.team.event.event_start|date:'c' }}"
+      ></span>
+      {% elif submission.team.event.problem_statements.first and
+      submission.team.event.problem_statements.first.time_to_unlock and
+      submission.team.event.problem_statements.first.time_to_unlock > now %}
+      <span class="font-semibold">Problem released in:</span>
+      <span
+        class="countdown"
+        data-target="{{ submission.team.event.problem_statements.first.time_to_unlock|date:'c' }}"
+      ></span>
+      {% endif %}
+      <a
+        href="#"
+        class="mt-auto bg-links hover:opacity-90 text-white font-semibold py-3 px-5 rounded-lg text-center"
+        >View & Score</a
+      >
+    </div>
+    {% empty %}
+    <p
+      class="col-span-full text-center text-lg text-light-text-secondary dark:text-dark-text-secondary py-16"
+    >
+      No submissions found.
+    </p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

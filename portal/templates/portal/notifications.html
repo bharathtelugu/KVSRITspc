@@ -1,0 +1,30 @@
+{% extends 'portal/base.html' %} {% block title %}Notifications{% endblock %} {%
+block content %}
+<div class="container mx-auto px-6 py-12">
+  <h1 class="text-4xl font-black mb-8">Your Notifications</h1>
+  <div class="space-y-6">
+    {% for notification in notifications %}
+    <div
+      class="card p-4 border border-gray-200 dark:border-gray-800 flex flex-col"
+    >
+      <p class="mb-2">{{ notification.message }}</p>
+      <span class="text-xs text-gray-500"
+        >{{ notification.created_at|date:"F j, Y H:i" }}</span
+      >
+      {% if not notification.is_read %}
+      <span
+        class="ml-auto text-xs font-bold uppercase bg-accent text-dark-bg px-2 py-1 rounded-full"
+        >New</span
+      >
+      {% endif %}
+    </div>
+    {% empty %}
+    <p
+      class="text-center text-lg text-light-text-secondary dark:text-dark-text-secondary py-16"
+    >
+      No notifications found.
+    </p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

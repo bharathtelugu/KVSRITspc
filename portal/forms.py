@@ -59,3 +59,17 @@ class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = Announcement
         fields = ['title', 'message']
+
+
+# Form for judges to submit scores and feedback
+from .models import JudgingScore, Event
+class JudgingScoreForm(forms.ModelForm):
+    class Meta:
+        model = JudgingScore
+        fields = ['score', 'feedback']
+
+# Form for event creation/editing
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = '__all__'

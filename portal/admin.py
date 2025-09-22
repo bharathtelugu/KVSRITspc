@@ -1,4 +1,7 @@
 from django.contrib import admin
+admin.site.site_header = 'CampusInnovate administration'
+admin.site.site_title = 'CampusInnovate administration'
+admin.site.index_title = 'CampusInnovate Dashboard'
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from .models import (
@@ -37,7 +40,7 @@ class EventMediaInline(admin.StackedInline): model = EventMedia; can_delete = Fa
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('event_name', 'event_start', 'registration_end')
+    list_display = ('event_name', 'title', 'registration_link', 'about_item_name', 'what_item_name')
     inlines = [
         EventMediaInline, ScheduleInline, ProblemStatementInline, EligibilityInline,
         HowToParticipateStepInline, OrganizerInline, FAQInline,
