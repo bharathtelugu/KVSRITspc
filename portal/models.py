@@ -74,21 +74,17 @@ class Event(models.Model):
     contact_instagram = models.URLField(blank=True, null=True)
     contact_linkedin = models.URLField(blank=True, null=True)
     event_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    registration_start = models.DateTimeField(null=True, blank=True)
+    registration_end = models.DateTimeField(null=True, blank=True)
     event_start = models.DateTimeField(null=True, blank=True)
-    event_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    event_end = models.DateTimeField(null=True, blank=True)
+    event_mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='physical')
+
 class EventBenefit(models.Model):
     event = models.ForeignKey(Event, related_name='benefits', on_delete=models.CASCADE)
     item_name = models.CharField(max_length=255)
     description = models.TextField()
-
-    
-    registration_start = models.DateTimeField()
-    registration_start = models.DateTimeField()
-    registration_end = models.DateTimeField()
-    event_start = models.DateTimeField()
-    event_end = models.DateTimeField()
-    event_mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='physical')
-    benefits = models.TextField(blank=True, null=True)
+    # Removed scheduling fields; now in Event
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -121,6 +117,8 @@ class SubSchedule(models.Model):
     description = models.TextField()
     class Meta:
         ordering = ['time']
+    def __str__(self):
+        return f"{self.title} ({self.time})"
 
 class Eligibility(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='eligibility')

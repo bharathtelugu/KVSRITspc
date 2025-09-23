@@ -99,250 +99,147 @@ body {
   color: var(--text-dark);
 }
 
-/* ====== Headings ====== */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--accent);
-  font-weight: bold;
-}
+/*
+=================================================================
+  Event Portal Stylesheet
+  This file works with the Tailwind CSS classes in the template.
+=================================================================
+*/
 
-/* ====== Form Elements ====== */
-input,
-textarea,
-select {
-  background-color: var(--bg-light);
-  color: var(--text-light);
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  width: 100%;
-  transition: 0.3s ease;
-}
-
-.dark input,
-.dark textarea,
-.dark select {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-  border: 1px solid #333;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent);
-}
-
-/* ====== Labels & Help Text ====== */
-label {
-  font-weight: 600;
-  margin-bottom: 4px;
-  display: block;
-  color: var(--text-light);
-}
-
-.dark label {
-  color: var(--text-dark);
-}
-
-.help-text {
-  font-size: 0.85rem;
-  color: var(--text-light-secondary);
-}
-
-.dark .help-text {
-  color: var(--text-dark-secondary);
-}
-
-/* ====== Buttons ====== */
-button,
-.btn {
-  background-color: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 0.6rem 1.5rem;
-  transition: background 0.3s ease;
-}
-
-button:hover,
-.btn:hover {
-  background-color: #00cc6a; /* slightly darker green */
-}
-
-a.btn-cancel {
-  background-color: #ccc;
-  color: #333;
-}
-
-.dark a.btn-cancel {
-  background-color: #333;
-  color: #e0e0e0;
-}
-
-/* ====== Links ====== */
-a {
-  color: var(--link);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* base.css - Custom styles for CampusInnovate */
+/* ========== Base & Theme Styles ========== */
+/* These are applied in the base.html template but are here for completeness */
 body {
   font-family: "Inter", sans-serif;
-  background-color: #f7f7f7;
-  color: #333333;
+  background-color: #f7f7f7; /* light-bg */
+  color: #333333; /* light-text */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 .dark body {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-header.scrolled {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  background-color: #fff;
-}
-.dark header.scrolled {
-  background-color: #222;
-}
-a {
-  transition: color 0.2s;
-}
-.text-links {
-  color: #1e90ff;
-}
-.text-accent {
-  color: #00ff85;
-}
-.bg-links {
-  background-color: #1e90ff;
-}
-.bg-accent {
-  background-color: #00ff85;
-}
-.button,
-.btn,
-.bg-links {
-  background-color: #1e90ff;
-  color: #fff;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: background 0.2s, color 0.2s;
-}
-.button:hover,
-.btn:hover,
-.bg-links:hover {
-  background-color: #1877cc;
-}
-.dark .text-links {
-  color: #1e90ff;
-}
-.dark .text-accent {
-  color: #00ff85;
-}
-.dark .bg-links {
-  background-color: #1e90ff;
-}
-.dark .bg-accent {
-  background-color: #00ff85;
-}
-/* Accent text for highlights */
-.accent-text {
-  color: #00ff85;
-  font-weight: 700;
-}
-/* Section backgrounds */
-.section {
-  background-color: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  padding: 2rem;
-}
-.dark .section {
-  background-color: #181818;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  background-color: #121212; /* dark-bg */
+  color: #e0e0e0; /* dark-text */
 }
 
-/* General Event Styles */
-.event-content {
-  max-width: 900px;
-  margin: auto;
-  padding: 2rem;
+/* ========== Custom Components ========== */
+
+/* --- Hero & General Buttons --- */
+.button {
+  display: inline-block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.dark .button:hover {
+  box-shadow: 0 10px 20px rgba(0, 255, 133, 0.1);
 }
 
-.event-content section {
-  background: var(--card-bg, #ffffff);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.event-content section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
-}
-
-/* Buttons */
-.event-content a.bg-links {
-  background: #2563eb; /* Tailwind blue-600 */
-  transition: background 0.3s ease;
-}
-
-.event-content a.bg-links:hover {
-  background: #1e40af; /* Tailwind blue-800 */
-}
-
-/* Lists */
-.event-content ul,
-.event-content ol {
-  margin-top: 0.5rem;
-  line-height: 1.6;
-}
-
-/* Problem Statements Card */
-.event-content .border {
-  transition: all 0.3s ease;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-}
-
-.event-content .border:hover {
-  border-color: #2563eb;
-  background: #eff6ff;
-}
-
-/* Section Headings */
-.event-content h3 {
+/* --- Countdown Timer --- */
+.countdown-circle {
   position: relative;
-  padding-bottom: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.event-content h3::after {
+.countdown-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* Start the circle from the top */
+}
+
+.countdown-svg .dot {
+  transition: fill 0.5s ease;
+}
+
+.countdown-number {
+  z-index: 10;
+  color: #00ff85; /* accent */
+}
+
+.countdown-label {
+  z-index: 10;
+}
+
+/* --- Schedule Timeline --- */
+.timeline-day {
+  position: relative;
+}
+
+.timeline-day ul {
+  list-style: none;
+  padding-left: 1.5rem;
+  border-left: 2px solid #00ff85; /* accent */
+}
+
+.timeline-day li {
+  position: relative;
+  padding-left: 1rem;
+}
+
+/* The dot on the timeline */
+.timeline-day li::before {
   content: "";
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: #2563eb;
-  border-radius: 2px;
+  left: -2rem; /* Position over the border line */
+  top: 0.5rem; /* Align vertically with text */
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #00ff85; /* accent */
+  border: 2px solid #f7f7f7; /* light-bg */
 }
 
-/* Countdown Timer */
-#countdown {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #dc2626; /* red-600 */
-  margin-top: 0.5rem;
+.dark .timeline-day li::before {
+  border-color: #121212; /* dark-bg */
 }
 
-/* Add more custom styles as needed */
+/* --- FAQ Accordion --- */
+.accordion-item {
+  transition: background-color 0.3s ease;
+}
+
+.accordion-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: #1e90ff; /* links */
+  background: none;
+  border: none;
+}
+.accordion-question:focus {
+  outline: none;
+}
+
+.accordion-question::after {
+  content: "+";
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #00ff85; /* accent */
+  transition: transform 0.3s ease;
+}
+
+.accordion-item.open .accordion-question::after {
+  transform: rotate(45deg);
+}
+
+.accordion-answer {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+  padding: 0 1.5rem;
+}
+
+.accordion-item.open .accordion-answer {
+  max-height: 300px; /* Adjust as needed for content */
+  padding: 0 1.5rem 1rem 1.5rem;
+}

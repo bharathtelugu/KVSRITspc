@@ -29,8 +29,12 @@ class CustomUserAdmin(BaseUserAdmin):
     get_user_role.short_description = 'Role'
 
 # --- Event Management Inlines ---
-class SubScheduleInline(admin.TabularInline): model = SubSchedule; extra = 1
-class ScheduleInline(admin.StackedInline): model = Schedule; inlines = [SubScheduleInline]; extra = 1
+class SubScheduleInline(admin.TabularInline):
+    model = SubSchedule
+    extra = 1
+class ScheduleInline(admin.TabularInline):
+    model = Schedule
+    extra = 1
 class FAQInline(admin.TabularInline): model = FAQ; extra = 1
 class EligibilityInline(admin.TabularInline): model = Eligibility; extra = 1
 class HowToParticipateStepInline(admin.TabularInline): model = HowToParticipateStep; extra = 1
@@ -41,10 +45,27 @@ class EventMediaInline(admin.StackedInline): model = EventMedia; can_delete = Fa
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('event_name', 'title', 'registration_link', 'about_item_name', 'what_item_name')
+    fields = [
+        'event_name', 'title', 'hero_section_details', 'registration_link',
+        'registration_start', 'registration_end', 'event_start', 'event_end',
+        'about_item_name', 'about_description', 'what_item_name', 'what_description',
+        'venue_name', 'venue_location', 'venue_google_map_link',
+        'contact_email', 'contact_whatsapp', 'contact_instagram', 'contact_linkedin',
+        'event_status', 'event_mode'
+    ]
     inlines = [
         EventMediaInline, ScheduleInline, ProblemStatementInline, EligibilityInline,
         HowToParticipateStepInline, OrganizerInline, FAQInline,
     ]
+
+@admin.register(Schedule)
+class ScheduleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'date', 'event')
+    inlines = [SubScheduleInline]
+
+@admin.register(SubSchedule)
+class SubScheduleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'time', 'schedule')
 
 # Re-register User admin
 admin.site.unregister(User)
