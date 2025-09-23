@@ -1,245 +1,174 @@
-/* Base theme styles for light and dark mode */
-/* ========== Base Styles ========== */
-html {
-  scroll-behavior: smooth;
+/* 1. Define your color palette in the :root (this is the default light mode) */
+:root {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F9F7FD;     /* For cards, containers */
+  --text-primary: #222222;     /* For headings */
+  --text-secondary: #6E6E80;   /* For body text, paragraphs */
+  --accent: #6F42C1;         /* For buttons, links, highlights */
+  --border-color: #E0DDEB;   /* For subtle borders, dividers */
+  --accent-t: rgba(111, 66, 193, 0.3);
 }
+
+/* 2. Override the variables when the 'dark' class is present */
+html.dark {
+  --bg-primary: #191924;
+  --bg-secondary: #2A2A3A;
+  --text-primary: #EAEAFB;
+  --text-secondary: #A0A0B8;
+  --accent: #A47DFF;
+  --border-color: #3B3B50;
+  --accent-t: rgba(164, 125, 255, 0.3);
+}
+
+/* 3. Apply the variables to your elements */
 body {
-  font-family: "Inter", sans-serif;
-  background-color: #f7f7f7; /* Light mode default */
-  color: #333333;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-.dark body,
-body.dark-mode {
-  background-color: #121212; /* Dark mode */
-  color: #e0e0e0;
-}
-
-/* ========== Card ========== */
-.card {
-  background-color: #fff;
-  border-radius: 1rem;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-  border: 1px solid #e5e7eb;
-}
-.dark .card {
-  background-color: #1e1e1e;
-  border-color: #333;
-}
-
-/* ========== Links and Buttons ========== */
-a,
-button {
-  cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.1s ease;
-}
-a:active,
-button:active {
-  transform: scale(0.98);
-}
-
-body {
-  font-family: "Inter", sans-serif;
-  background-color: #f7f7f7;
-  color: #333333;
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  font-family: sans-serif;
   transition: background-color 0.3s, color 0.3s;
 }
 
-.dark body {
-  background-color: #121212;
-  color: #e0e0e0;
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+h1, h2, h3 {
+  color: var(--text-primary);
 }
 
 .card {
-  background-color: #fff;
-  border-radius: 1rem;
-  border: 1px solid #e5e7eb;
-  transition: background-color 0.3s, border-color 0.3s;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
 }
 
-.dark .card {
-  background-color: #1e1e1e;
-  border-color: #333;
-}
-
-a,
-button {
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-}
-a:active,
-button:active {
-  transform: scale(0.98);
-}
-
-/* ====== Base Theme Colors ====== */
-:root {
-  --bg-light: #f7f7f7;
-  --bg-dark: #121212;
-
-  --text-light: #333333;
-  --text-dark: #e0e0e0;
-
-  --text-light-secondary: #555555;
-  --text-dark-secondary: #aaaaaa;
-
-  --accent: #00ff85;
-  --link: #1e90ff;
-}
-
-/* ====== Light Mode ====== */
-body {
-  background-color: var(--bg-light);
-  color: var(--text-light);
-}
-
-/* ====== Dark Mode ====== */
-.dark body {
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-}
-
-/*
-=================================================================
-  Event Portal Stylesheet
-  This file works with the Tailwind CSS classes in the template.
-=================================================================
-*/
-
-/* ========== Base & Theme Styles ========== */
-/* These are applied in the base.html template but are here for completeness */
-body {
-  font-family: "Inter", sans-serif;
-  background-color: #f7f7f7; /* light-bg */
-  color: #333333; /* light-text */
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.dark body {
-  background-color: #121212; /* dark-bg */
-  color: #e0e0e0; /* dark-text */
-}
-
-/* ========== Custom Components ========== */
-
-/* --- Hero & General Buttons --- */
-.button {
+.button-primary {
+  background-color: var(--accent);
+  color: #FFFFFF; /* This white text works on both violet shades */
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
   display: inline-block;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-.dark .button:hover {
-  box-shadow: 0 10px 20px rgba(0, 255, 133, 0.1);
+  transition: transform 0.2s;
 }
 
-/* --- Countdown Timer --- */
-.countdown-circle {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.button-primary:hover {
+  transform: scale(1.05);
 }
 
-.countdown-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg); /* Start the circle from the top */
+.button-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+  transition: transform 0.2s;
+  border: 1px solid var(--border-color);
 }
 
-.countdown-svg .dot {
-  transition: fill 0.5s ease;
+.button-secondary:hover {
+  transform: scale(1.05);
 }
 
-.countdown-number {
-  z-index: 10;
-  color: #00ff85; /* accent */
+a {
+  color: var(--accent);
+  text-decoration: none;
 }
 
-.countdown-label {
-  z-index: 10;
+/* Header */
+header {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
 }
 
-/* --- Schedule Timeline --- */
-.timeline-day {
-  position: relative;
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.timeline-day ul {
-  list-style: none;
-  padding-left: 1.5rem;
-  border-left: 2px solid #00ff85; /* accent */
+.brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
 }
 
-.timeline-day li {
-  position: relative;
-  padding-left: 1rem;
+.brand .accent {
+    color: var(--accent);
 }
 
-/* The dot on the timeline */
-.timeline-day li::before {
-  content: "";
-  position: absolute;
-  left: -2rem; /* Position over the border line */
-  top: 0.5rem; /* Align vertically with text */
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: #00ff85; /* accent */
-  border: 2px solid #f7f7f7; /* light-bg */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.dark .timeline-day li::before {
-  border-color: #121212; /* dark-bg */
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
 }
 
-/* --- FAQ Accordion --- */
-.accordion-item {
-  transition: background-color 0.3s ease;
+/* Footer */
+footer {
+    padding: 2rem 0;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
 }
 
-.accordion-question {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  text-align: left;
-  padding: 1rem 1.5rem;
+/* Form Styles */
+.form-field p {
+  margin: 0;
+}
+.form-field label {
+  display: block;
+  margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #1e90ff; /* links */
-  background: none;
-  border: none;
+  color: var(--text-primary);
 }
-.accordion-question:focus {
+.form-field input,
+.form-field select {
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+.form-field input:focus,
+.form-field select:focus {
   outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-t);
+}
+.form-field .help {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+.form-field .error {
+    font-size: 0.875rem;
+    color: var(--accent);
 }
 
+/* Timeline */
+.timeline-day ul {
+  border-color: var(--accent);
+}
+.timeline-day li::before {
+  background-color: var(--accent);
+  border-color: var(--bg-primary);
+}
+
+/* Accordion */
 .accordion-question::after {
-  content: "+";
-  font-size: 1.5rem;
-  font-weight: 300;
-  color: #00ff85; /* accent */
-  transition: transform 0.3s ease;
-}
-
-.accordion-item.open .accordion-question::after {
-  transform: rotate(45deg);
-}
-
-.accordion-answer {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.4s ease-out, padding 0.4s ease-out;
-  padding: 0 1.5rem;
-}
-
-.accordion-item.open .accordion-answer {
-  max-height: 300px; /* Adjust as needed for content */
-  padding: 0 1.5rem 1rem 1.5rem;
+  color: var(--accent);
 }

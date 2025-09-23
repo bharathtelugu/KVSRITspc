@@ -3,7 +3,7 @@
 <div class="container mx-auto px-6 py-12">
   <h1 class="text-4xl font-black mb-8">Judge Dashboard</h1>
   <p
-    class="mb-6 text-lg text-light-text-secondary dark:text-dark-text-secondary"
+    class="mb-6 text-lg"
   >
     Welcome, {{ request.user.first_name }}! Review and score participant
     submissions below.
@@ -14,12 +14,10 @@
     <ul class="space-y-2">
       {% for notification in notifications %}
       <li
-        class="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg flex justify-between items-center"
+        class="card flex justify-between items-center"
       >
         <span>{{ notification.message }}</span>
-        <span class="text-xs text-gray-500"
-          >{{ notification.created_at|date:"F j, Y H:i" }}</span
-        >
+        <span class="text-xs">{{ notification.created_at|date:"F j, Y H:i" }}</span>
       </li>
       {% endfor %}
     </ul>
@@ -28,9 +26,9 @@
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
     {% for submission in submissions %}
     <div
-      class="card p-6 border border-gray-200 dark:border-gray-800 flex flex-col hover:border-accent transition-colors duration-300"
+      class="card flex flex-col"
     >
-      <h2 class="text-2xl font-bold mb-2 text-accent">
+      <h2 class="text-2xl font-bold mb-2">
         {{ submission.project_title }}
       </h2>
       <p class="mb-2">
@@ -64,13 +62,13 @@
       {% endif %}
       <a
         href="#"
-        class="mt-auto bg-links hover:opacity-90 text-white font-semibold py-3 px-5 rounded-lg text-center"
+        class="button-primary mt-auto text-center"
         >View & Score</a
       >
     </div>
     {% empty %}
     <p
-      class="col-span-full text-center text-lg text-light-text-secondary dark:text-dark-text-secondary py-16"
+      class="col-span-full text-center text-lg py-16"
     >
       No submissions found.
     </p>

@@ -1,5 +1,20 @@
-// Countdown Timer
 document.addEventListener("DOMContentLoaded", () => {
+  // Feather icons
+  if (window.feather) {
+    window.feather.replace();
+  }
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute("href")).scrollIntoView({
+        behavior: "smooth",
+      });
+    });
+  });
+
+  // Countdown Timer
   const countdownEl = document.getElementById("countdown");
   const startDate = countdownEl?.dataset.start;
 
@@ -28,44 +43,36 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCountdown();
     setInterval(updateCountdown, 1000);
   }
-});
 
-// Smooth Scroll for Anchor Links
-document.querySelectorAll("a[href^='#']").forEach((anchor) => {
-  anchor.addEventListener("click", function (e) {
-    e.preventDefault();
-    document.querySelector(this.getAttribute("href")).scrollIntoView({
-      behavior: "smooth",
-    });
-  });
-});
+  // Theme Switcher
+  const themeToggle = document.getElementById("theme-toggle");
+  const htmlEl = document.documentElement;
 
-// base.js - Custom JS for CampusInnovate
+  const setDarkTheme = () => {
+    htmlEl.classList.add("dark");
+    themeToggle.innerHTML = '<i data-feather="sun"></i>';
+    feather.replace();
+    localStorage.setItem("theme", "dark");
+  };
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Feather icons
-  if (window.feather) {
-    window.feather.replace();
+  const setLightTheme = () => {
+    htmlEl.classList.remove("dark");
+    themeToggle.innerHTML = '<i data-feather="moon"></i>';
+    feather.replace();
+    localStorage.setItem("theme", "light");
+  };
+
+  if (localStorage.getItem("theme") === "dark") {
+    setDarkTheme();
+  } else {
+    setLightTheme();
   }
 
-  // Smooth scroll for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
-    anchor.addEventListener("click", function (e) {
-      const target = document.querySelector(this.getAttribute("href"));
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: "smooth" });
-      }
-    });
-  });
-
-  // Example: Add active class to navbar on scroll
-  const navbar = document.querySelector("header");
-  window.addEventListener("scroll", function () {
-    if (window.scrollY > 10) {
-      navbar.classList.add("scrolled");
+  themeToggle.addEventListener("click", () => {
+    if (htmlEl.classList.contains("dark")) {
+      setLightTheme();
     } else {
-      navbar.classList.remove("scrolled");
+      setDarkTheme();
     }
   });
 });

@@ -1,146 +1,316 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en" class="{% if request.session.theme == 'dark' %}dark{% endif %}">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}CampusInnovate{% endblock %}</title>
-    <!-- Bootstrap 5 CDN -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
-    <script src="{% static 'js/base.js' %}"></script>
+    <style>
+      /* 1. Define your color palette in the :root (this is the default light mode) */
+      :root {
+        --bg-primary: #FFFFFF;
+        --bg-secondary: #F9F7FD;     /* For cards, containers */
+        --text-primary: #222222;     /* For headings */
+        --text-secondary: #6E6E80;   /* For body text, paragraphs */
+        --accent: #6F42C1;         /* For buttons, links, highlights */
+        --border-color: #E0DDEB;   /* For subtle borders, dividers */
+        --accent-t: rgba(111, 66, 193, 0.3);
+      }
+
+      /* 2. Override the variables when the 'dark' class is present */
+      html.dark {
+        --bg-primary: #191924;
+        --bg-secondary: #2A2A3A;
+        --text-primary: #EAEAFB;
+        --text-secondary: #A0A0B8;
+        --accent: #A47DFF;
+        --border-color: #3B3B50;
+        --accent-t: rgba(164, 125, 255, 0.3);
+      }
+
+      /* 3. Apply the variables to your elements */
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-secondary);
+        font-family: sans-serif;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .container {
+          max-width: 960px;
+          margin: 0 auto;
+          padding: 0 1rem;
+      }
+
+      h1, h2, h3 {
+        color: var(--text-primary);
+      }
+
+      .card {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
+
+      .button-primary {
+        background-color: var(--accent);
+        color: #FFFFFF; /* This white text works on both violet shades */
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        display: inline-block;
+        transition: transform 0.2s;
+      }
+
+      .button-primary:hover {
+        transform: scale(1.05);
+      }
+
+      .button-secondary {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        display: inline-block;
+        transition: transform 0.2s;
+        border: 1px solid var(--border-color);
+      }
+
+      .button-secondary:hover {
+        transform: scale(1.05);
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      /* Header */
+      header {
+          padding: 1rem 0;
+          border-bottom: 1px solid var(--border-color);
+      }
+
+      nav {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .brand {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: var(--text-primary);
+      }
+
+      .brand .accent {
+          color: var(--accent);
+      }
+
+      .nav-links {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+      }
+
+      .theme-toggle {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: var(--text-primary);
+      }
+
+      /* Footer */
+      footer {
+          padding: 2rem 0;
+          margin-top: 2rem;
+          border-top: 1px solid var(--border-color);
+          text-align: center;
+      }
+
+      /* Form Styles */
+      .form-field p {
+        margin: 0;
+      }
+      .form-field label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .form-field input,
+      .form-field select {
+        width: 100%;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+      }
+      .form-field input:focus,
+      .form-field select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-t);
+      }
+      .form-field .help {
+          font-size: 0.875rem;
+          color: var(--text-secondary);
+      }
+      .form-field .error {
+          font-size: 0.875rem;
+          color: var(--accent);
+      }
+
+      /* Timeline */
+      .timeline-day ul {
+        border-color: var(--accent);
+      }
+      .timeline-day li::before {
+        background-color: var(--accent);
+        border-color: var(--bg-primary);
+      }
+
+      /* Accordion */
+      .accordion-question::after {
+        color: var(--accent);
+      }
+    </style>
     {% block head %}{% endblock %}
   </head>
   <body>
-    <!-- Header / Navbar -->
-    <header
-      class="bg-light-bg/80 dark:bg-dark-bg/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800"
-    >
-      <nav
-        class="container mx-auto px-6 py-4 flex justify-between items-center"
-      >
-        <a
-          href="{% url 'index' %}"
-          class="text-2xl font-bold text-light-text dark:text-dark-text"
-        >
-          Campus<span class="text-accent">Innovate</span>
-        </a>
-        <div class="hidden md:flex space-x-6 items-center">
-          <a
-            href="#about"
-            class="text-light-text-secondary dark:text-dark-text-secondary hover:text-links transition-colors font-medium"
-            >About</a
-          >
-          <!-- Header / Navbar -->
-          <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top border-bottom">
-            <div class="container-fluid">
-              <a class="navbar-brand fw-bold" href="{% url 'index' %}">
-                Campus<span class="text-primary">Innovate</span>
-              </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+    <header>
+        <nav class="container">
+            <a href="{% url 'index' %}" class="brand">
+              Campus<span class="accent">Innovate</span>
+            </a>
+            <div class="nav-links">
+              <a href="#about">About</a>
+              <a href="#why-participate">Why Participate?</a>
+              <a href="#challenges">Challenges</a>
+              <a href="#schedule">Schedules</a>
+              <a href="#rewards">Rewards</a>
+              <a href="#faq">FAQs</a>
+
+              {% if user.is_authenticated %}
+                {% if request.user.userprofile.user_role == 'Event Manager' %}
+                  <a href="{% url 'manager_dashboard' %}">Manager Dashboard</a>
+                {% elif request.user.userprofile.user_role == 'Judge' %}
+                  <a href="{% url 'judge_dashboard' %}">Judge Dashboard</a>
+                {% elif request.user.userprofile.user_role == 'Participant' %}
+                  <a href="{% url 'participant_dashboard' %}">Participant Dashboard</a>
+                {% endif %}
+                <a href="{% url 'logout' %}" class="button-secondary">Logout</a>
+              {% else %}
+                <a href="{% url 'login' %}" class="button-primary">Login</a>
+              {% endif %}
+
+              <button id="theme-toggle" class="theme-toggle">
+                <i data-feather="moon"></i>
               </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#why-participate">Why Participate?</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#challenges">Challenges</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#schedule">Schedules</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#rewards">Rewards</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#faq">FAQs</a></li>
-                </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                  {% if user.is_authenticated %}
-                    <li class="nav-item">
-                      <a href="{% url 'notifications' %}" class="nav-link">
-                        <i data-feather="bell" class="me-1"></i> Notifications
-                      </a>
-                    </li>
-                    {% if request.user.userprofile.user_role == 'Event Manager' %}
-                      <li class="nav-item"><a href="{% url 'manager_dashboard' %}" class="nav-link">Manager Dashboard</a></li>
-                    {% elif request.user.userprofile.user_role == 'Judge' %}
-                      <li class="nav-item"><a href="{% url 'judge_dashboard' %}" class="nav-link">Judge Dashboard</a></li>
-                    {% elif request.user.userprofile.user_role == 'Participant' %}
-                      <li class="nav-item"><a href="{% url 'participant_dashboard' %}" class="nav-link">Participant Dashboard</a></li>
-                    {% endif %}
-                    <li class="nav-item"><a href="{% url 'logout' %}" class="btn btn-danger ms-2">Logout</a></li>
-                  {% else %}
-                    <li class="nav-item"><a href="{% url 'login' %}" class="btn btn-primary ms-2">Login</a></li>
-                  {% endif %}
-                </ul>
-              </div>
             </div>
-          </nav>
-            href="https://www.linkedin.com/in/bharathtelugu-ck/"
-            target="_blank"
-            class="text-links hover:underline"
-            >Bharath Telugu</a
-          >
-        </p>
-      </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+            © Students Programming Club Of CSE. All Rights Reserved.
+            <br />Designed & Developed by
+            <a href="https://www.linkedin.com/in/bharathtelugu-ck/" target="_blank">Bharath Telugu</a>
+            </p>
+        </div>
     </footer>
 
-    <!-- Scripts -->
     <script>
-      // --- Theme Switcher Logic ---
-      const themeToggleBtn = document.getElementById("theme-toggle");
-      const themeToggleMobileBtn = document.getElementById(
-        "theme-toggle-mobile"
-      );
-      const lightIcon = document.getElementById("theme-toggle-light-icon");
-      const darkIcon = document.getElementById("theme-toggle-dark-icon");
-      const lightIconMobile = document.getElementById(
-        "theme-toggle-light-icon-mobile"
-      );
-      const darkIconMobile = document.getElementById(
-        "theme-toggle-dark-icon-mobile"
-      );
-
-      const applyTheme = (theme) => {
-        if (theme === "dark") {
-          document.documentElement.classList.add("dark");
-          lightIcon.classList.remove("hidden");
-          darkIcon.classList.add("hidden");
-          lightIconMobile.classList.remove("hidden");
-          darkIconMobile.classList.add("hidden");
-        } else {
-          document.documentElement.classList.remove("dark");
-          darkIcon.classList.remove("hidden");
-          lightIcon.classList.add("hidden");
-          darkIconMobile.classList.remove("hidden");
-          lightIconMobile.classList.add("hidden");
+      document.addEventListener("DOMContentLoaded", () => {
+        // Feather icons
+        if (window.feather) {
+          window.feather.replace();
         }
-        // Notify other scripts that the theme has changed
-        document.dispatchEvent(new CustomEvent("themeChanged"));
-      };
 
-      const toggleTheme = () => {
-        const isDark = document.documentElement.classList.toggle("dark");
-        const newTheme = isDark ? "dark" : "light";
-        localStorage.setItem("color-theme", newTheme);
-        applyTheme(newTheme);
-      };
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute("href")).scrollIntoView({
+              behavior: "smooth",
+            });
+          });
+        });
 
-      themeToggleBtn.addEventListener("click", toggleTheme);
-      if (themeToggleMobileBtn) {
-        themeToggleMobileBtn.addEventListener("click", toggleTheme);
-      }
+        // Countdown Timer
+        const countdownEl = document.getElementById("countdown");
+        const startDate = countdownEl?.dataset.start;
 
-      const savedTheme =
-        localStorage.getItem("color-theme") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light");
-      applyTheme(savedTheme);
+        if (countdownEl && startDate) {
+          const eventDate = new Date(startDate).getTime();
 
-      // Feather Icons
-      feather.replace();
+          function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+
+            if (distance <= 0) {
+              countdownEl.innerHTML = "🎉 Event Started!";
+              return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(
+              (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            );
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+          }
+
+          updateCountdown();
+          setInterval(updateCountdown, 1000);
+        }
+
+        // Theme Switcher
+        const themeToggle = document.getElementById("theme-toggle");
+        const htmlEl = document.documentElement;
+
+        const setDarkTheme = () => {
+          htmlEl.classList.add("dark");
+          themeToggle.innerHTML = '<i data-feather="sun"></i>';
+          feather.replace();
+          localStorage.setItem("theme", "dark");
+        };
+
+        const setLightTheme = () => {
+          htmlEl.classList.remove("dark");
+          themeToggle.innerHTML = '<i data-feather="moon"></i>';
+          feather.replace();
+          localStorage.setItem("theme", "light");
+        };
+
+        if (localStorage.getItem("theme") === "dark") {
+          setDarkTheme();
+        } else {
+          setLightTheme();
+        }
+
+        themeToggle.addEventListener("click", () => {
+          if (htmlEl.classList.contains("dark")) {
+            setLightTheme();
+          } else {
+            setDarkTheme();
+          }
+        });
+      });
     </script>
     {% block scripts %}{% endblock %}
   </body>

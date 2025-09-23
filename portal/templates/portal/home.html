@@ -1,53 +1,55 @@
 {% extends 'portal/base.html' %} {% block title %}Home | CampusInnovate{% endblock %} {% block content %}
 <div class="container mx-auto px-6 py-12">
-  <h1 class="text-3xl font-bold mb-4">
-    Welcome, {{ user.get_full_name|default:user.username }}!
-  </h1>
-  <p
-    class="text-lg text-light-text-secondary dark:text-dark-text-secondary mb-8"
-  >
-    You are now logged in. Explore your dashboard and event updates below.
-  </p>
+  <div class="text-center">
+    <h1 class="text-3xl font-bold mb-4">
+      Welcome, {{ user.get_full_name|default:user.username }}!
+    </h1>
+    <p
+      class="text-lg mb-8"
+    >
+      You are now logged in. Explore your dashboard and event updates below.
+    </p>
+  </div>
   <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     <!-- Show dashboard based on user role -->
     {% if user.is_superuser %}
     <a
       href="/admin/"
-      class="block bg-links text-white rounded-lg p-6 shadow hover:scale-105 transition-transform"
+      class="card text-center hover:scale-105 transition-transform"
     >
-      <i data-feather="settings" class="w-6 h-6 mb-2"></i>
+      <i data-feather="settings" class="w-8 h-8 mx-auto mb-2"></i>
       <span class="font-semibold">Admin Dashboard</span>
     </a>
     {% elif user.userprofile.user_role == 'Judge' %}
     <a
       href="{% url 'judge_dashboard' %}"
-      class="block bg-links text-white rounded-lg p-6 shadow hover:scale-105 transition-transform"
+      class="card text-center hover:scale-105 transition-transform"
     >
-      <i data-feather="award" class="w-6 h-6 mb-2"></i>
+      <i data-feather="award" class="w-8 h-8 mx-auto mb-2"></i>
       <span class="font-semibold">Judge Dashboard</span>
     </a>
     {% elif user.userprofile.user_role == 'Participant' %}
     <a
       href="{% url 'participant_dashboard' %}"
-      class="block bg-links text-white rounded-lg p-6 shadow hover:scale-105 transition-transform"
+      class="card text-center hover:scale-105 transition-transform"
     >
-      <i data-feather="users" class="w-6 h-6 mb-2"></i>
+      <i data-feather="users" class="w-8 h-8 mx-auto mb-2"></i>
       <span class="font-semibold">Participant Dashboard</span>
     </a>
     {% endif %}
     <!-- Notifications and Event Home links -->
     <a
       href="{% url 'notifications' %}"
-      class="block bg-accent text-black rounded-lg p-6 shadow hover:scale-105 transition-transform"
+      class="card text-center hover:scale-105 transition-transform"
     >
-      <i data-feather="bell" class="w-6 h-6 mb-2"></i>
+      <i data-feather="bell" class="w-8 h-8 mx-auto mb-2"></i>
       <span class="font-semibold">Notifications</span>
     </a>
     <a
       href="{% url 'index' %}"
-      class="block bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text rounded-lg p-6 shadow hover:scale-105 transition-transform"
+      class="card text-center hover:scale-105 transition-transform"
     >
-      <i data-feather="home" class="w-6 h-6 mb-2"></i>
+      <i data-feather="home" class="w-8 h-8 mx-auto mb-2"></i>
       <span class="font-semibold">Event Home</span>
     </a>
   </div>

@@ -3,11 +3,11 @@
 {% endcomment %}
 <div class="event-content py-8">
   <section
-    class="mb-10 card bg-white dark:bg-dark-bg rounded-2xl shadow-lg p-8 text-center"
+    class="mb-10 card text-center"
   >
-    <h1 class="text-4xl font-extrabold mb-2 text-accent">{{ event.title }}</h1>
+    <h1 class="text-4xl font-extrabold mb-2">{{ event.title }}</h1>
     <p
-      class="mb-4 text-lg text-light-text-secondary dark:text-dark-text-secondary"
+      class="mb-4 text-lg"
     >
       {{ event.hero_section_details }}
     </p>
@@ -15,7 +15,7 @@
     <a
       href="{{ event.registration_link }}"
       id="register-button"
-      class="button bg-links text-white px-8 py-3 rounded-xl font-bold shadow hover:scale-105 transition-transform"
+      class="button-primary"
       >Register Now</a
     >
     {% endif %}
@@ -28,7 +28,7 @@
     data-reveal-time="{{ event.problem_statement_reveal_time|date:'c' }}"
     class="mb-10 flex flex-wrap flex-col gap-8 justify-center items-center w-full"
   >
-    <h3 id="countdown-title" class="text-2xl font-bold mb-4 text-accent">
+    <h3 id="countdown-title" class="text-2xl font-bold mb-4">
       Registration Closes In:
     </h3>
     <div id="countdown" class="flex flex-wrap gap-8 w-full justify-center">
@@ -36,11 +36,11 @@
         class="countdown-circle relative w-28 h-28 flex flex-col items-center justify-center"
       >
         <svg class="absolute top-0 left-0 w-full h-full" id="days-ring"></svg>
-        <span class="countdown-number text-3xl font-bold text-accent" id="days"
+        <span class="countdown-number text-3xl font-bold" id="days"
           >0</span
         >
         <span
-          class="countdown-label text-xs uppercase text-light-text-secondary dark:text-dark-text-secondary"
+          class="countdown-label text-xs uppercase"
           >Days</span
         >
       </div>
@@ -48,11 +48,11 @@
         class="countdown-circle relative w-28 h-28 flex flex-col items-center justify-center"
       >
         <svg class="absolute top-0 left-0 w-full h-full" id="hours-ring"></svg>
-        <span class="countdown-number text-3xl font-bold text-accent" id="hours"
+        <span class="countdown-number text-3xl font-bold" id="hours"
           >0</span
         >
         <span
-          class="countdown-label text-xs uppercase text-light-text-secondary dark:text-dark-text-secondary"
+          class="countdown-label text-xs uppercase"
           >Hours</span
         >
       </div>
@@ -64,12 +64,12 @@
           id="minutes-ring"
         ></svg>
         <span
-          class="countdown-number text-3xl font-bold text-accent"
+          class="countdown-number text-3xl font-bold"
           id="minutes"
           >0</span
         >
         <span
-          class="countdown-label text-xs uppercase text-light-text-secondary dark:text-dark-text-secondary"
+          class="countdown-label text-xs uppercase"
           >Minutes</span
         >
       </div>
@@ -81,12 +81,12 @@
           id="seconds-ring"
         ></svg>
         <span
-          class="countdown-number text-3xl font-bold text-accent"
+          class="countdown-number text-3xl font-bold"
           id="seconds"
           >0</span
         >
         <span
-          class="countdown-label text-xs uppercase text-light-text-secondary dark:text-dark-text-secondary"
+          class="countdown-label text-xs uppercase"
           >Seconds</span
         >
       </div>
@@ -94,23 +94,23 @@
   </section>
 
   <section class="mb-10 w-full">
-    <h2 class="text-2xl font-bold mb-6 text-accent">Why Participate?</h2>
+    <h2 class="text-2xl font-bold mb-6">Why Participate?</h2>
     <div class="grid md:grid-cols-3 gap-6 w-full">
       {% for benefit in event.benefits.all %}
       <div
-        class="card bg-white dark:bg-dark-bg rounded-xl shadow p-6 flex flex-col items-center"
+        class="card flex flex-col items-center"
       >
-        <i data-feather="star" class="w-8 h-8 text-accent mb-2"></i>
-        <div class="font-semibold text-lg text-links mb-1">
+        <i data-feather="star" class="w-8 h-8 mb-2"></i>
+        <div class="font-semibold text-lg mb-1">
           {{ benefit.title }}
         </div>
-        <div class="text-light-text-secondary dark:text-dark-text-secondary">
+        <div>
           {{ benefit.description }}
         </div>
       </div>
       {% empty %}
       <div
-        class="col-span-3 text-center text-light-text-secondary dark:text-dark-text-secondary"
+        class="col-span-3 text-center"
       >
         No benefits listed yet.
       </div>
@@ -119,20 +119,20 @@
   </section>
 
   <section class="mb-10 w-full">
-    <h2 class="text-2xl font-bold mb-6 text-accent">Problem Statements</h2>
+    <h2 class="text-2xl font-bold mb-6">Problem Statements</h2>
     <div class="grid md:grid-cols-2 gap-6 w-full">
       {% for ps in event.problem_statements.all %}
-      <div class="card bg-white dark:bg-dark-bg rounded-xl shadow p-6">
-        <strong class="text-links text-lg">{{ ps.title }}</strong>
+      <div class="card">
+        <strong class="text-lg">{{ ps.title }}</strong>
         <div
-          class="text-light-text-secondary dark:text-dark-text-secondary mt-2"
+          class="mt-2"
         >
           {{ ps.description }}
         </div>
       </div>
       {% empty %}
       <div
-        class="col-span-2 text-center text-light-text-secondary dark:text-dark-text-secondary"
+        class="col-span-2 text-center"
       >
         Problem statements will be released soon.
       </div>
@@ -141,17 +141,17 @@
   </section>
 
   <section class="mb-10 w-full">
-    <h2 class="text-2xl font-bold mb-6 text-accent">Schedule</h2>
+    <h2 class="text-2xl font-bold mb-6">Schedule</h2>
     <div class="timeline w-full">
       {% for schedule in event.schedules.all %}
       <div class="timeline-day mb-6">
-        <div class="font-bold text-links mb-2">{{ schedule.day_title }}</div>
-        <ul class="ml-4 border-l-2 border-accent pl-4">
+        <div class="font-bold mb-2">{{ schedule.day_title }}</div>
+        <ul class="ml-4 border-l-2 pl-4">
           {% for sub in schedule.sub_schedules.all %}
           <li class="mb-2">
-            <span class="font-semibold text-accent">{{ sub.time }}</span> -
+            <span class="font-semibold">{{ sub.time }}</span> -
             <span
-              class="text-light-text-secondary dark:text-dark-text-secondary"
+              class=""
               >{{ sub.activity }}</span
             >
           </li>
@@ -160,7 +160,7 @@
       </div>
       {% empty %}
       <div
-        class="text-center text-light-text-secondary dark:text-dark-text-secondary"
+        class="text-center"
       >
         Schedule will be announced soon.
       </div>
@@ -169,9 +169,9 @@
   </section>
 
   <section class="mb-10 w-full">
-    <h2 class="text-2xl font-bold mb-6 text-accent">How to Participate</h2>
+    <h2 class="text-2xl font-bold mb-6">How to Participate</h2>
     <ol
-      class="list-decimal ml-6 text-light-text-secondary dark:text-dark-text-secondary"
+      class="list-decimal ml-6"
     >
       {% for step in event.participation_steps.all %}
       <li>{{ step.description }}</li>
@@ -182,18 +182,18 @@
   </section>
 
   <section class="mb-10 w-full">
-    <h2 class="text-2xl font-bold mb-6 text-accent">Organizers</h2>
+    <h2 class="text-2xl font-bold mb-6">Organizers</h2>
     <div class="grid md:grid-cols-2 gap-6 w-full">
       {% for organizer in event.organizers.all %}
-      <div class="card bg-white dark:bg-dark-bg rounded-xl shadow p-6">
-        <div class="font-semibold text-links">{{ organizer.name }}</div>
-        <div class="text-light-text-secondary dark:text-dark-text-secondary">
+      <div class="card">
+        <div class="font-semibold">{{ organizer.name }}</div>
+        <div class="">
           {{ organizer.role }}
         </div>
       </div>
       {% empty %}
       <div
-        class="col-span-2 text-center text-light-text-secondary dark:text-dark-text-secondary"
+        class="col-span-2 text-center"
       >
         Organizers will be announced soon.
       </div>
@@ -202,26 +202,26 @@
   </section>
 
   <section class="mb-10 w-full">
-    <h2 class="text-2xl font-bold mb-6 text-accent">FAQs</h2>
+    <h2 class="text-2xl font-bold mb-6">FAQs</h2>
     <div class="accordion w-full">
       {% for faq in event.faqs.all %}
       <div
-        class="accordion-item bg-white dark:bg-dark-bg rounded-xl shadow mb-4"
+        class="accordion-item card mb-4"
       >
         <button
-          class="accordion-question w-full text-left px-6 py-4 font-semibold text-links focus:outline-none"
+          class="accordion-question w-full text-left px-6 py-4 font-semibold focus:outline-none"
         >
           {{ faq.question }}
         </button>
         <div
-          class="accordion-answer px-6 pb-4 text-light-text-secondary dark:text-dark-text-secondary hidden"
+          class="accordion-answer px-6 pb-4 hidden"
         >
           {{ faq.answer }}
         </div>
       </div>
       {% empty %}
       <div
-        class="text-center text-light-text-secondary dark:text-dark-text-secondary"
+        class="text-center"
       >
         No FAQs available yet.
       </div>
@@ -230,33 +230,33 @@
   </section>
 
   <footer
-    class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 grid md:grid-cols-3 gap-8 text-light-text-secondary dark:text-dark-text-secondary w-full"
+    class="mt-12 pt-8 border-t grid md:grid-cols-3 gap-8 w-full"
   >
     <div>
-      <h3 class="font-bold text-links mb-2">Organized By</h3>
+      <h3 class="font-bold mb-2">Organized By</h3>
       {% for organizer in event.organizers.all %}
       <div>{{ organizer.name }}</div>
       {% endfor %}
     </div>
     <div>
-      <h3 class="font-bold text-links mb-2">Venue</h3>
+      <h3 class="font-bold mb-2">Venue</h3>
       <div>{{ event.venue_name }}</div>
       <div>{{ event.venue_location }}</div>
     </div>
     <div>
-      <h3 class="font-bold text-links mb-2">Connect with Us</h3>
+      <h3 class="font-bold mb-2">Connect with Us</h3>
       <div>
         Instagram:
         <a
           href="{{ event.instagram_link }}"
-          class="text-accent underline"
+          class="underline"
           target="_blank"
           >{{ event.instagram_link }}</a
         >
       </div>
       <div>
         Email:
-        <a href="mailto:{{ event.contact_email }}" class="text-accent underline"
+        <a href="mailto:{{ event.contact_email }}" class="underline"
           >{{ event.contact_email }}</a
         >
       </div>
@@ -265,176 +265,5 @@
 </div>
 
 {% block scripts %}
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const accentColor = "#00FF85"; // Your theme's accent color
-
-    // --- 1. SVG Ring Functions ---
-    function setupDotRing(svgId, dots, color) {
-      const svg = document.getElementById(svgId);
-      if (!svg) return;
-      svg.innerHTML = "";
-      const r = 50,
-        cx = 56,
-        cy = 56;
-      for (let i = 0; i < dots; i++) {
-        const angle = (2 * Math.PI * i) / dots;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        const circle = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "circle"
-        );
-        circle.setAttribute("cx", x);
-        circle.setAttribute("cy", y);
-        circle.setAttribute("r", 3.5);
-        circle.setAttribute("fill", "#333"); // Default dot color
-        circle.setAttribute("class", "dot");
-        svg.appendChild(circle);
-      }
-    }
-
-    function updateDotRing(svgId, value, max, accent) {
-      const svg = document.getElementById(svgId);
-      if (!svg) return;
-      const dots = svg.querySelectorAll(".dot");
-      const litDots = (value / max) * dots.length;
-      for (let i = 0; i < dots.length; i++) {
-        dots[i].setAttribute("fill", i < litDots ? accent : "#333");
-      }
-    }
-
-    // --- 2. Phased Countdown & Button Logic ---
-    const countdownSection = document.getElementById("countdown-section");
-
-    if (countdownSection) {
-      // Setup rings
-      // Using 60 dots for all rings makes the 'max' mapping easier
-      setupDotRing("days-ring", 60, accentColor);
-      setupDotRing("hours-ring", 60, accentColor);
-      setupDotRing("minutes-ring", 60, accentColor);
-      setupDotRing("seconds-ring", 60, accentColor);
-
-      // Get dates from data attributes
-      const regEndDate = new Date(
-        countdownSection.dataset.regEnd
-      ).getTime();
-      const eventStartDate = new Date(
-        countdownSection.dataset.eventStart
-      ).getTime();
-      const revealTimeDate = new Date(
-        countdownSection.dataset.revealTime
-      ).getTime();
-
-      // Get DOM elements to update
-      const titleEl = document.getElementById("countdown-title");
-      const buttonEl = document.getElementById("register-button");
-      const daysEl = document.getElementById("days");
-      const hoursEl = document.getElementById("hours");
-      const minutesEl = document.getElementById("minutes");
-      const secondsEl = document.getElementById("seconds");
-      const countdownEl = document.getElementById("countdown");
-
-      const countdownInterval = setInterval(function () {
-        const now = new Date().getTime();
-        let targetDate, targetTitle;
-        let maxDays = 30; // Default max days for ring display
-
-        // --- This is the core logic ---
-        if (now < regEndDate) {
-          targetDate = regEndDate;
-          targetTitle = "Registration Closes In:";
-          maxDays = Math.max(
-            30,
-            Math.floor((regEndDate - now) / (1000 * 60 * 60 * 24))
-          );
-          if (buttonEl) {
-            buttonEl.disabled = false;
-            buttonEl.textContent = "Register Now";
-            buttonEl.style.opacity = 1;
-            buttonEl.style.cursor = "pointer";
-          }
-        } else if (now < eventStartDate) {
-          targetDate = eventStartDate;
-          targetTitle = "Event Starts In:";
-          maxDays = Math.max(
-            7,
-            Math.floor((eventStartDate - now) / (1000 * 60 * 60 * 24))
-          );
-          if (buttonEl) {
-            buttonEl.disabled = true;
-            buttonEl.textContent = "Registration Closed";
-            buttonEl.style.opacity = 0.6;
-            buttonEl.style.cursor = "not-allowed";
-          }
-        } else if (now < revealTimeDate) {
-          targetDate = revealTimeDate;
-          targetTitle = "Problem Statements Reveal In:";
-          maxDays = Math.max(
-            1,
-            Math.floor((revealTimeDate - now) / (1000 * 60 * 60 * 24))
-          );
-        } else {
-          // Event is live or over
-          titleEl.textContent = "The Event is Live!";
-          if(countdownEl) countdownEl.style.display = "none";
-          clearInterval(countdownInterval);
-          return;
-        }
-
-        // Update title
-        if(titleEl) titleEl.textContent = targetTitle;
-
-        // Calculate distance
-        const distance = targetDate - now;
-
-        // Calculate time units
-        let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        let hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        // Update text
-        if(daysEl) daysEl.textContent = days;
-        if(hoursEl) hoursEl.textContent = hours;
-        if(minutesEl) minutesEl.textContent = minutes;
-        if(secondsEl) secondsEl.textContent = seconds;
-
-        // Update SVG Dot Rings
-        updateDotRing("days-ring", days, maxDays, accentColor); // Use dynamic max
-        updateDotRing("hours-ring", hours, 24, accentColor);
-        updateDotRing("minutes-ring", minutes, 60, accentColor);
-        updateDotRing("seconds-ring", seconds, 60, accentColor);
-      }, 1000);
-    }
-
-    // --- 3. FAQ Accordion ---
-    document.querySelectorAll(".accordion-question").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        const answer = this.nextElementSibling;
-        const isHidden = answer.classList.contains("hidden");
-
-        // Optional: Close all other answers
-        // document.querySelectorAll(".accordion-answer").forEach(function(ans) {
-        //   ans.classList.add("hidden");
-        // });
-        
-        // Toggle the clicked answer
-        if (isHidden) {
-          answer.classList.remove("hidden");
-        } else {
-          answer.classList.add("hidden");
-        }
-      });
-    });
-
-    // --- 4. Feather Icons ---
-    if (window.feather) {
-      window.feather.replace();
-    }
-  });
-</script>
-
+<script src="{% static 'js/event_page.js' %}"></script>
 {% endblock %}

@@ -1,16 +1,20 @@
 {% extends 'portal/base.html' %} {% block title %}Error | CampusInnovate{%
 endblock %} {% block content %}
-<div class="container mx-auto px-6 py-12 text-center">
-  <h1 class="text-3xl font-bold text-red-600 mb-4">
-    Oops! Something went wrong.
-  </h1>
-  <p
-    class="text-lg text-light-text-secondary dark:text-dark-text-secondary mb-8"
-  >
-    Please contact to admin.
-  </p>
-  <a href="/" class="bg-links text-white font-semibold py-2 px-5 rounded-lg"
-    >Go Home</a
-  >
+<div class="container mx-auto px-6 py-12 flex items-center justify-center">
+  <div class="max-w-md w-full">
+    <div class="card text-center">
+      <div class="p-8">
+        <h1 class="text-3xl font-bold text-primary mb-4">
+          Oops! Something went wrong.
+        </h1>
+        <p
+          class="text-lg text-secondary mb-8"
+        >
+          Please contact to admin.
+        </p>
+        <a href="/" class="button-primary">Go Home</a>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
